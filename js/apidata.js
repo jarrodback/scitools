@@ -93,7 +93,7 @@ function getMissionById(id){
     }
     addCountiesToMap();
 
-    searchQ = [];
+    var searchQ = [];
     missionIDfound = false;
     console.log(imageData); 
     //Check if the missionID is given, if so display all polygons with that ID
@@ -139,11 +139,20 @@ function getMissionById(id){
         for(var x = 0; x < searchQ.length; x++){
             var row = document.createElement("tr");
             var cell1 = document.createElement("td");
+            var cell2 = document.createElement("td"); 
 
             var textnode = document.createTextNode(searchQ[x]);
+            var buttonnode = document.createElement("button");
+            
+            buttonnode.innerHTML = "View"; 
+            //buttonnode.setAttribute( "onClick", "getMissionById(searchQ[x]);" )
             cell1.appendChild(textnode);
-            row.appendChild(cell1)
+            cell2.appendChild(buttonnode); 
+
+            row.appendChild(cell1);
+            row.appendChild(cell2);
             tabBody.appendChild(row); 
+       
         }
         document.getElementById("polyIDtable").hidden = false; 
     }else{
