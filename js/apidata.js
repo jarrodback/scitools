@@ -6,6 +6,8 @@ let map;
 var authenication;
 let authToken;
 var searchInAction = false;
+var missionDict = []; 
+var markerGroup = L.layerGroup(); 
 
 function authenticate(){
     data = new FormData();
@@ -71,10 +73,18 @@ function getProducts() {
         if (request.readyState === 4  && request.status === 200){
             var json = JSON.parse(request.responseText);
             console.log(json.results.searchresults.length);
+            //Clear Mission Dictionary
+            for(var member in missionDict) delete missionDict[member];
             for(var x = 0; x < json.results.searchresults.length; x++){
                 getGeoJson(json.results.searchresults[x].id,function(geoJSONdata){
                     console.log(x);
                 addToMap(geoJSONdata);
+
+                var idLink = {
+                    missionid: geoJSONdata.properties.missionid, 
+                    searchid: geoJSONdata.properties.id
+                };
+                missionDict.push(idLink);
                 imageData.push(geoJSONdata)
                 });
             }
@@ -83,23 +93,50 @@ function getProducts() {
 }
 function getMissionById(id){
     searchInAction = true;
-     map.eachLayer(function (layer){
-         map.removeLayer(layer);
-    });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18
-    }).addTo(map);
+    
+    for(var x = 0; x < layerData.length; x++){
+        map.removeLayer(layerData[x]);
+    }
     addCountiesToMap();
+
+    searchQ = [];
+    missionIDfound = false;
+    //Check if the missionID is given, if so display all polygons with that ID
+
+    for(var x = 0; x < missionDict.length; x++){
+        if(id == missionDict[x].missionid){
+            missionIDfound = true; 
+            searchQ.push(missionDict[x].searchid);
+        }
+    }
+
+    if(missionIDfound){
+        for(var x = 0; x < searchQ.length; x++){
+            getGeoJson(searchQ[x], function(geoJSONdata){
+                addToMap(geoJSONdata);
+                var mapLocation = geoJSONdata.properties.centre.split(",");
+        
+                marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
+                marker.addTo(markerGroup); 
+                marker.addTo(map);
+            });
+        }
+    }else{
+
 
     getGeoJson(id, function(geoJSONdata){
         addToMap(geoJSONdata);
         var mapLocation = geoJSONdata.properties.centre.split(",");
+        marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
+        marker.addTo(markerGroup);
+        marker.addTo(map);
         map.flyTo({lat: mapLocation[0], lng: mapLocation[1]});
         document.getElementById("currentMissionID").textContent = 'Mission ID: ' + geoJSONdata.properties.missionid; 
         document.getElementById("currentArea").textContent = 'Mission Area: ' + geoJSONdata.properties.area; 
         document.getElementById("currentCoverage").textContent = 'UK Coverage: ' + geoJSONdata.properties.percentage + '%'; 
         document.getElementById("currentID").textContent = 'ID: ' + geoJSONdata.properties.id;
     });
+    }
 }
 function getGeoJson(id, callback){
     console.log(id);
@@ -174,10 +211,24 @@ var sidebar = document.getElementById("sidebar");
 document.addEventListener('click', function(event){
     var isClickInside = specElement.contains(event.target);
     var isSidebarInside = sidebar.contains(event.target);
+
     if(!isClickInside && !isSidebarInside && searchInAction == true){
+        markerGroup.eachLayer(function(layer){
+            map.removeLayer(layer); 
+        });
+
+        for(var x = 0; x < layerData.length; x++){
+            map.removeLayer(layerData[x]);
+        }
+        
+        
         getProducts(); 
         searchInAction = false; 
     }
+    
+    
+    
+    
     if(isClickInside){
         specElement.value = '';
     }
