@@ -5,9 +5,8 @@ var layerData =[];
 let map;
 var authenication;
 let authToken;
-var searchInAction = false;
-var missionDict = []; 
 var markerGroup = L.layerGroup(); 
+var activeSearch = false; 
 
 function authenticate(){
     data = new FormData();
@@ -73,18 +72,13 @@ function getProducts() {
         if (request.readyState === 4  && request.status === 200){
             var json = JSON.parse(request.responseText);
             console.log(json.results.searchresults.length);
-            //Clear Mission Dictionary
-            for(var member in missionDict) delete missionDict[member];
+           
             for(var x = 0; x < json.results.searchresults.length; x++){
                 getGeoJson(json.results.searchresults[x].id,function(geoJSONdata){
                     console.log(x);
                 addToMap(geoJSONdata);
 
-                var idLink = {
-                    missionid: geoJSONdata.properties.missionid, 
-                    searchid: geoJSONdata.properties.id
-                };
-                missionDict.push(idLink);
+            
                 imageData.push(geoJSONdata)
                 });
             }
@@ -92,8 +86,7 @@ function getProducts() {
     }
 }
 function getMissionById(id){
-    searchInAction = true;
-    
+    activeSearch = true; 
     for(var x = 0; x < layerData.length; x++){
         map.removeLayer(layerData[x]);
     }
@@ -101,14 +94,23 @@ function getMissionById(id){
 
     searchQ = [];
     missionIDfound = false;
+    console.log(imageData); 
     //Check if the missionID is given, if so display all polygons with that ID
-
+    /*
     for(var x = 0; x < missionDict.length; x++){
         if(id == missionDict[x].missionid){
             missionIDfound = true; 
             searchQ.push(missionDict[x].searchid);
         }
-    }
+    }*/
+
+    for(var x = 0; x < imageData.length; x++){
+        if(id == imageData[x].properties.missionid){
+            missionIDfound = true; 
+            console.log(imageData[x].properties.missionid);
+            searchQ.push(imageData[x].properties.id); 
+        }
+    } 
 
     if(missionIDfound){
         for(var x = 0; x < searchQ.length; x++){
@@ -122,11 +124,12 @@ function getMissionById(id){
             });
         }
     }else{
-
-
     getGeoJson(id, function(geoJSONdata){
         addToMap(geoJSONdata);
         var mapLocation = geoJSONdata.properties.centre.split(",");
+         markerGroup.eachLayer(function(layer){
+            map.removeLayer(layer); 
+        });
         marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
         marker.addTo(markerGroup);
         marker.addTo(map);
@@ -139,7 +142,7 @@ function getMissionById(id){
     }
 }
 function getGeoJson(id, callback){
-    console.log(id);
+    //console.log(id);
     let request = new XMLHttpRequest();
     request.open('GET','https://hallam.sci-toolset.com/discover/api/v1/products/' + id, true);
     request.setRequestHeader('Content-Type', 'application/json');
@@ -208,11 +211,15 @@ function saveToCSV(){
 var specElement = document.getElementById("searchbar");
 var sidebar = document.getElementById("sidebar");
 
-document.addEventListener('click', function(event){
-    var isClickInside = specElement.contains(event.target);
-    var isSidebarInside = sidebar.contains(event.target);
 
-    if(!isClickInside && !isSidebarInside && searchInAction == true){
+
+
+//REFRESH MISSIONS AFTER SEARCH WHEN SEARCH BAR IS CLICKED 
+document.addEventListener('click', function(event){
+    var isClickInside = specElement.contains(event.target);    
+    if(isClickInside && activeSearch){
+        specElement.value = '';
+
         markerGroup.eachLayer(function(layer){
             map.removeLayer(layer); 
         });
@@ -220,18 +227,12 @@ document.addEventListener('click', function(event){
         for(var x = 0; x < layerData.length; x++){
             map.removeLayer(layerData[x]);
         }
-        
-        
+        activeSearch = false; 
+        imageData = [];
         getProducts(); 
-        searchInAction = false; 
     }
-    
-    
-    
-    
-    if(isClickInside){
-        specElement.value = '';
-    }
+
 })
+
 initMap();
 
