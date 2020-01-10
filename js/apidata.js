@@ -145,7 +145,7 @@ function addToMap(data){
     }).addTo(map);
 }
 function dataSort(){
-    
+            //sorting the areas in ascending order
             areaData.sort(function(a,b){return a-b});
             /* for( var x = 0; x < areaData.length; x++){
                 console.log(areaData[x]);
@@ -167,6 +167,58 @@ function saveToCSV(){
         hidden.target = '_blank';
         hidden.download = 'areadata.csv';
         hidden.click();  
+}
+function getHistogram(){
+    // using d3.js
+    // graph dimensions
+    var margin = {top:10, right: 30, bottom: 30, left: 40 },
+        width = 460 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    var x = d3.scaleLinear()
+    .domain([0,1000])
+    .range([0,width]);
+
+    var y = d3.scaleLinear()
+    .range([height,0])
+    y.domain([0, height]);
+
+    
+    var histogram = d3.histogram()
+    .value(function(d) { return d.price; })
+    .domain(x.domain())
+    .thresholds(x.ticks(70));
+
+    var svg = d3.select("#histogramDisplay").append("svg")
+        .attr("width",width + margin.left + margin.right)
+        .attr("height",height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform","translate("+ margin.left + "," + margin.top + ")");
+
+    d3.csv("http://192.168.17.1:8887/data/areadata.csv").then(function(data){
+        for(var i = 0; i < data.length; i++){
+            console.log(data[i])
+        }
+
+    var bins = histogram(data);
+
+
+    svg.selectAll("rect")
+    .data(bins)
+    .enter().append("rect")
+        .attr("x",1)
+        .attr("transform", function(d) {return "translate(" +x(d.x0) + "," + y(d.length) + ")";})
+        .attr("width", function(d) {return x(d.x1) - x(d.x0) - 1;})
+        .attr("height", function(d) {return height - y(d.length);})
+        .style("fill", "#000000")
+    })
+    
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+    svg.append("g")
+    .call(d3.axisLeft(y));
 }
 var specElement = document.getElementById("searchbar");
 var sidebar = document.getElementById("sidebar");
