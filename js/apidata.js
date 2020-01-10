@@ -145,23 +145,28 @@ function addToMap(data){
     }).addTo(map);
 }
 function dataSort(){
-    console.log("Sorting");
+    
             areaData.sort(function(a,b){return a-b});
             /* for( var x = 0; x < areaData.length; x++){
                 console.log(areaData[x]);
-            }  */
-            var csv = 'AREA\n';
-            areaData.forEach(function(row){
-            console.log(row);
-            csv += "\n";
-            csv += row;
-            });
+            }  */  
+            window.alert("Data Sorted");
+            console.log("Sorted!");
+}
+function saveToCSV(){
+    console.log("Downloading");
+        var csv = 'AREA\n';
+        areaData.forEach(function(row){
+        console.log(row);
+        csv += row;
+        csv += "\n";
+    });
         console.log(csv);
         var hidden = document.createElement('a');
         hidden.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
         hidden.target = '_blank';
         hidden.download = 'areadata.csv';
-        hidden.click();    
+        hidden.click();  
 }
 var specElement = document.getElementById("searchbar");
 var sidebar = document.getElementById("sidebar");
