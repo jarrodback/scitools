@@ -10,6 +10,8 @@ var searchInAction = false;
 var arrcreated = false;
 var before_load = new Date().getTime();
 var aftr_loadtime
+var countiesLength = 0;
+var feaytslength = 0;
 function authenticate() {
     data = new FormData();
     data.set('grant_type', 'password');
@@ -64,7 +66,7 @@ function addCountiesToMap() {
     geojsonLayer.addTo(map);
 }
 function getProducts() {
-    
+
     const postBody = "{\"size\":100, \"keywords\":\"\"}";//, \"strings\":[{\"field\":\"sceneimagery\",\"value\":[\"*\"],\"operator\":\"or\"}]}";
     let request = new XMLHttpRequest();
     request.open('POST', 'https://hallam.sci-toolset.com/discover/api/v1/products/search', true);
@@ -75,19 +77,18 @@ function getProducts() {
     request.onreadystatechange = function () {
         if (request.readyState === 4 && request.status === 200) {
             var json = JSON.parse(request.responseText);
-            //console.log(json.results.searchresults.length);
             for (var x = 0; x < json.results.searchresults.length; x++) {
                 getGeoJson(json.results.searchresults[x].id, function (geoJSONdata) {
-                    //console.log(x);
                     addToMap(geoJSONdata);
                     imageData.push(geoJSONdata)
                     missionsInCounties(geoJSONdata);
+
                 });
-                //console.log("DONE!")
+
             }
-            console.log(counties);
         }
     }
+
 }
 function getMissionById(id) {
     searchInAction = true;
@@ -171,40 +172,49 @@ function missionsInCounties(missionGeoJSON) {
         .then(Response => Response.text())
         .then((data) => {
             feats = JSON.parse(data);
-            fetch ('data/ukBorders.geojson')
+            fetch('data/ukBorders.geojson')
                 .then(Response => Response.text())
                 .then((data) => {
                     ukborder = JSON.parse(data);
-                    
-            if (arrcreated == false) {
-                for (var i = 0; i < feats.features.length; i++) {
-                    counties.push({ name: feats.features[i].properties.name, missionsInside: 0 })
-                }
-            }
-            arrcreated = true;
-            for (var i = 0; i < feats.features.length; i++) {
-                for (var j = 0; j < missionGeoJSON.geometry.coordinates[0].length; j = j+120)
-                    if (d3.geoContains(feats.features[i], missionGeoJSON.geometry.coordinates[0][j])) {
-                        //console.log(missionGeoJSON.geometry.coordinates[0][j])
-                        for (var p = 0; p < counties.length; p++)
-                            {
-                                if (feats.features[i].properties.name === counties[p].name){
-                                    counties[p].missionsInside++;
-                                }
-                            }
-                            if(!d3.geoContains(ukborder.features, missionGeoJSON.geometry.coordinates[0][j])){
-                                intWaters++;
-                            }
+                    if (arrcreated == false) {
+                        for (var i = 0; i < feats.features.length; i++) {
+                            counties.push({ name: feats.features[i].properties.name, missionsInside: 0 });
+                            countiesLength = counties.length;
+                            feaytslength = feats.features.length;
+                        }
                     }
 
+                    var missionlength = missionGeoJSON.geometry.coordinates[0].length;
+                    arrcreated = true;
+                    for (var i = 0; i < feaytslength; i++) {
+                        for (var j = 0; j < missionlength; j = j + 144)
+                            if (d3.geoContains(feats.features[i], missionGeoJSON.geometry.coordinates[0][j])) {
+                                for (var p = 0; p < countiesLength; p++) {
+                                    if (feats.features[i].properties.name === counties[p].name) {
+                                        counties[p].missionsInside++;
+                                    }
+                                }
+                                if (!d3.geoContains(ukborder.features, missionGeoJSON.geometry.coordinates[0][j])) {
+                                    intWaters++;
+                                }
+                            }
 
-            }
+
+                    }
                     aftr_loadtime = new Date().getTime();
-                    pgloadtime = (aftr_loadtime - before_load)/1000
+                    pgloadtime = (aftr_loadtime - before_load) / 1000
                     console.log(pgloadtime);
-                    console.log(intWaters);
-        }
-        )
+                    var totalmissions = 0;
+                    for (var i = 0; i < countiesLength; i++) {
+                        totalmissions = totalmissions + counties[i].missionsInside;
+                    }
+                    totalmissions = totalmissions + intWaters;
+                    for (var i = 0; i < countiesLength; i++) {
+                        console.log(counties[i].name + " has " + (((counties[i].missionsInside/totalmissions)*100).toFixed(2)) + "% missions in it")
+                    }
+                    console.log("There are " + ((intWaters/totalmissions)*100).toFixed(2) + "% of Missions in international water")
+                }
+                )
         }
         )
 }
