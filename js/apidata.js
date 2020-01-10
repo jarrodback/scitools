@@ -1,4 +1,5 @@
 const areaOfUk = 242495;
+var areaData = [];
 var imageData = [];
 var layerData =[];
 let map;
@@ -99,7 +100,6 @@ function getMissionById(id){
         document.getElementById("currentCoverage").textContent = 'UK Coverage: ' + geoJSONdata.properties.percentage + '%'; 
         document.getElementById("currentID").textContent = 'ID: ' + geoJSONdata.properties.id;
     });
-
 }
 function getGeoJson(id, callback){
     console.log(id);
@@ -114,6 +114,7 @@ function getGeoJson(id, callback){
             var json = JSON.parse(request.responseText);
             var area = turf.area(turf.polygon(json.product.result.footprint.coordinates));
             area = ((area/1000000));
+            areaData.push(area);
             var percentage = (area/areaOfUk)*100;
             var geojson = 
             {
@@ -143,6 +144,25 @@ function addToMap(data){
         }
     }).addTo(map);
 }
+function dataSort(){
+    console.log("Sorting");
+            areaData.sort(function(a,b){return a-b});
+            /* for( var x = 0; x < areaData.length; x++){
+                console.log(areaData[x]);
+            }  */
+            var csv = 'AREA\n';
+            areaData.forEach(function(row){
+            console.log(row);
+            csv += "\n";
+            csv += row;
+            });
+        console.log(csv);
+        var hidden = document.createElement('a');
+        hidden.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+        hidden.target = '_blank';
+        hidden.download = 'areadata.csv';
+        hidden.click();    
+}
 var specElement = document.getElementById("searchbar");
 var sidebar = document.getElementById("sidebar");
 
@@ -157,5 +177,5 @@ document.addEventListener('click', function(event){
         specElement.value = '';
     }
 })
-
 initMap();
+
