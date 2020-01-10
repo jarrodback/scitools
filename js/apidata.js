@@ -124,6 +124,28 @@ function getMissionById(id){
                 marker.addTo(map);
             });
         }
+        //zoom out to see all missions
+        var zoomScale = map.getZoom(); 
+        if(zoomScale > 6) map.zoomOut(6);
+        map.setView([54.3138, -2.169], 6);
+
+        if(searchQ.length > 1) document.getElementById("results").textContent = searchQ.length + " Results found";
+        else document.getElementById("results").textContent = searchQ.length + " Result found";
+        
+
+        //PUT POLYGON ID'S IN TABLE
+        var tabBody = document.getElementsByTagName("tbody").item(0);
+
+        for(var x = 0; x < searchQ.length; x++){
+            var row = document.createElement("tr");
+            var cell1 = document.createElement("td");
+
+            var textnode = document.createTextNode(searchQ[x]);
+            cell1.appendChild(textnode);
+            row.appendChild(cell1)
+            tabBody.appendChild(row); 
+        }
+        document.getElementById("polyIDtable").hidden = false; 
     }else{
     getGeoJson(id, function(geoJSONdata){
         addToMap(geoJSONdata);
@@ -139,11 +161,7 @@ function getMissionById(id){
         sleep(700).then(() => {
         map.zoomIn(4);
         })
-
-        document.getElementById("currentMissionID").textContent = 'Mission ID: ' + geoJSONdata.properties.missionid; 
-        document.getElementById("currentArea").textContent = 'Mission Area: ' + geoJSONdata.properties.area; 
-        document.getElementById("currentCoverage").textContent = 'UK Coverage: ' + geoJSONdata.properties.percentage + '%'; 
-        document.getElementById("currentID").textContent = 'ID: ' + geoJSONdata.properties.id;
+        document.getElementById("polyIDtable").hidden = true; 
     });
     }
 }
@@ -287,6 +305,9 @@ document.addEventListener('click', function(event){
         }
         activeSearch = false; 
         imageData = [];
+        document.getElementById("results").textContent = "0 Result found";
+        document.getElementById("polyIDtable").hidden = true; 
+
         getProducts(); 
     }
 
