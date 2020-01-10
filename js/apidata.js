@@ -36,7 +36,8 @@ function initMap(){
 
   map = L.map('map').setView([54.3138, -2.169], 6);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
+    maxZoom: 9,
+    minZoom: 6
   }).addTo(map);
   addCountiesToMap();
   authenticate();
@@ -134,6 +135,11 @@ function getMissionById(id){
         marker.addTo(markerGroup);
         marker.addTo(map);
         map.flyTo({lat: mapLocation[0], lng: mapLocation[1]});
+        
+        sleep(700).then(() => {
+        map.zoomIn(4);
+        })
+
         document.getElementById("currentMissionID").textContent = 'Mission ID: ' + geoJSONdata.properties.missionid; 
         document.getElementById("currentArea").textContent = 'Mission Area: ' + geoJSONdata.properties.area; 
         document.getElementById("currentCoverage").textContent = 'UK Coverage: ' + geoJSONdata.properties.percentage + '%'; 
@@ -233,6 +239,9 @@ document.addEventListener('click', function(event){
     }
 
 })
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 initMap();
 
