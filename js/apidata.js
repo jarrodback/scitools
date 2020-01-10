@@ -5,7 +5,8 @@ var layerData =[];
 let map;
 var authenication;
 let authToken;
-var searchInAction = false;
+var markerGroup = L.layerGroup(); 
+var activeSearch = false; 
 
 function authenticate(){
     data = new FormData();
@@ -71,10 +72,13 @@ function getProducts() {
         if (request.readyState === 4  && request.status === 200){
             var json = JSON.parse(request.responseText);
             console.log(json.results.searchresults.length);
+           
             for(var x = 0; x < json.results.searchresults.length; x++){
                 getGeoJson(json.results.searchresults[x].id,function(geoJSONdata){
                     console.log(x);
                 addToMap(geoJSONdata);
+
+            
                 imageData.push(geoJSONdata)
                 });
             }
@@ -82,27 +86,63 @@ function getProducts() {
     }
 }
 function getMissionById(id){
-    searchInAction = true;
-     map.eachLayer(function (layer){
-         map.removeLayer(layer);
-    });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18
-    }).addTo(map);
+    activeSearch = true; 
+    for(var x = 0; x < layerData.length; x++){
+        map.removeLayer(layerData[x]);
+    }
     addCountiesToMap();
 
+    searchQ = [];
+    missionIDfound = false;
+    console.log(imageData); 
+    //Check if the missionID is given, if so display all polygons with that ID
+    /*
+    for(var x = 0; x < missionDict.length; x++){
+        if(id == missionDict[x].missionid){
+            missionIDfound = true; 
+            searchQ.push(missionDict[x].searchid);
+        }
+    }*/
+
+    for(var x = 0; x < imageData.length; x++){
+        if(id == imageData[x].properties.missionid){
+            missionIDfound = true; 
+            console.log(imageData[x].properties.missionid);
+            searchQ.push(imageData[x].properties.id); 
+        }
+    } 
+
+    if(missionIDfound){
+        for(var x = 0; x < searchQ.length; x++){
+            getGeoJson(searchQ[x], function(geoJSONdata){
+                addToMap(geoJSONdata);
+                var mapLocation = geoJSONdata.properties.centre.split(",");
+        
+                marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
+                marker.addTo(markerGroup); 
+                marker.addTo(map);
+            });
+        }
+    }else{
     getGeoJson(id, function(geoJSONdata){
         addToMap(geoJSONdata);
         var mapLocation = geoJSONdata.properties.centre.split(",");
+         markerGroup.eachLayer(function(layer){
+            map.removeLayer(layer); 
+        });
+        marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
+        marker.addTo(markerGroup);
+        marker.addTo(map);
         map.flyTo({lat: mapLocation[0], lng: mapLocation[1]});
         document.getElementById("currentMissionID").textContent = 'Mission ID: ' + geoJSONdata.properties.missionid; 
         document.getElementById("currentArea").textContent = 'Mission Area: ' + geoJSONdata.properties.area; 
         document.getElementById("currentCoverage").textContent = 'UK Coverage: ' + geoJSONdata.properties.percentage + '%'; 
         document.getElementById("currentID").textContent = 'ID: ' + geoJSONdata.properties.id;
     });
+    }
 }
 function getGeoJson(id, callback){
-    console.log(id);
+    //console.log(id);
     let request = new XMLHttpRequest();
     request.open('GET','https://hallam.sci-toolset.com/discover/api/v1/products/' + id, true);
     request.setRequestHeader('Content-Type', 'application/json');
@@ -223,16 +263,28 @@ function getHistogram(){
 var specElement = document.getElementById("searchbar");
 var sidebar = document.getElementById("sidebar");
 
+
+
+
+//REFRESH MISSIONS AFTER SEARCH WHEN SEARCH BAR IS CLICKED 
 document.addEventListener('click', function(event){
-    var isClickInside = specElement.contains(event.target);
-    var isSidebarInside = sidebar.contains(event.target);
-    if(!isClickInside && !isSidebarInside && searchInAction == true){
-        getProducts(); 
-        searchInAction = false; 
-    }
-    if(isClickInside){
+    var isClickInside = specElement.contains(event.target);    
+    if(isClickInside && activeSearch){
         specElement.value = '';
+
+        markerGroup.eachLayer(function(layer){
+            map.removeLayer(layer); 
+        });
+
+        for(var x = 0; x < layerData.length; x++){
+            map.removeLayer(layerData[x]);
+        }
+        activeSearch = false; 
+        imageData = [];
+        getProducts(); 
     }
+
 })
+
 initMap();
 
