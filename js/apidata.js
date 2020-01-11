@@ -213,7 +213,9 @@ function addToMap(data){
             layer.bindPopup("Mission ID: " + feature.properties.missionid
             + '<br>Area: ' + parseFloat(feature.properties.area.toFixed(2)) + "km²" 
             + '<br>Percentage Covered: ' + parseFloat(feature.properties.percentage.toFixed(6)) + "%"
-            + '<br>ID: ' + feature.properties.id);
+            + '<br>ID: ' + feature.properties.id
+            + '<br><a href="#" class="popupSearchMissionId">Search this Mission</a>'
+            + '<br><a href="#" class="popupSearchPolygonId">Search this ID</a>');
         }
     }).addTo(map);
 }
@@ -327,3 +329,15 @@ function sleep(ms) {
 
 initMap();
 
+map.on('popupopen', function(feature){
+    var missionid = feature.popup._source.feature.properties.missionid;
+    var id = feature.popup._source.feature.properties.id;
+    $('.popupSearchMissionId').click(function(){
+        document.getElementById("searchbar").value = missionid;
+        getMissionById(document.getElementById('searchbar').value);
+    });
+    $('.popupSearchPolygonId').click(function(){
+        document.getElementById("searchbar").value = id;
+        getMissionById(document.getElementById('searchbar').value);
+    });
+});
