@@ -26,7 +26,7 @@ function initMap(){
         addToMap(imageData[x]);
     }
     console.log("All missions have been added to map");
-}, 10000);
+}, 7000);
 }
 function addCountiesToMap(){
     var myStyle = {
@@ -49,7 +49,6 @@ function addCountiesToMap(){
 function addToMap(data){
     L.geoJSON(data, {
         onEachFeature: function(feature, layer){ 
-            console.log(feature);
             layerData.push(layer);
             layer.bindPopup("Mission ID: " + feature.properties.missionid
             + '<br>Area: ' + parseFloat(feature.properties.area.toFixed(2)) + "km²" 
@@ -146,7 +145,7 @@ function getProductByIDPHP(id, callback){
 }
 function getProductFromImageData(id, callback){
     for(var x=0; x<imageData.length; x++){
-        if(imageData[x].properties.id === id){
+        if(imageData[x].properties.id == id){
             callback(imageData[x]);
         }
     }
@@ -194,7 +193,7 @@ function getMissionById(id){
     });
 
     var mytbl = document.getElementById("polyIDtable");
-    mytbl.getElementsByTagName("tbody")[0].innerHTML = mytabl.rows[0].innerHTML;
+    mytbl.getElementsByTagName("tbody")[0].innerHTML = mytbl.rows[0].innerHTML;
 
 
     //activeSearch set to true, to show search is in progress
@@ -279,46 +278,6 @@ function getMissionById(id){
     });
     }
 }
-
-var specElement = document.getElementById("searchbar");
-var sidebar = document.getElementById("sidebar");
-
-document.addEventListener('click', function(event){
-    //checks if search is being cancelled by clicking inside the search bar
-    var isClickInside = specElement.contains(event.target);    
-    if(isClickInside && activeSearch){
-
-        resetData();
-        //reload products 
-        repopulateMap();
-    }
-    //if the event clicked is a idQsearch button 
-    if(event.toElement.className == 'idQsearch'){
-        //finds the correct button and corresponding polygon ID
-        console.log(event);
-        for(var x = 0; x < searchQ.length; x++){
-            //if found set marker on polygon
-            if(event.toElement.id == 'idQsearch' + x){
-                
-                var mapLocation;
-                getProductByIDPHP(searchQ[x], function(geoJSONdata){
-                    console.log(geoJSONdata.properties.centre);
-
-                    mapLocation = geoJSONdata.properties.centre.split(",");
-                    markerGroup.eachLayer(function(layer){
-                    map.removeLayer(layer); 
-                    marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
-                    marker.addTo(markerGroup);
-                    marker.addTo(map);
-                }); 
-
-            });
-            };
-        }
-    };
-
-})
-
 function resetData(){
     //reset map view, clear markers and clear searchQ
         map.setView([54.3138, -2.169], 6);
@@ -332,17 +291,47 @@ function resetData(){
         }
         //reset imageData and change result's found to 0 
         activeSearch = false; 
-        imageData = [];
         document.getElementById("results").textContent = "0 Result found";
         document.getElementById("polyIDtable").hidden = true; 
 };
 
+var specElement = document.getElementById("searchbar");
+var sidebar = document.getElementById("sidebar");
+document.addEventListener('click', function(event){
+    //checks if search is being cancelled by clicking inside the search bar
+    var isClickInside = specElement.contains(event.target);    
+    if(isClickInside && activeSearch){
+        resetData();
+        //reload products 
+        repopulateMap();
+    }
+    //if the event clicked is a idQsearch button 
+    if(event.toElement.className == 'idQsearch'){
+        //finds the correct button and corresponding polygon ID
+        for(var x = 0; x < searchQ.length; x++){
+            //if found set marker on polygon
+            if(event.toElement.id == 'idQsearch' + x){
+                
+                var mapLocation;
+                getProductFromImageData(searchQ[x], function(geoJSONdata){
+                    mapLocation = geoJSONdata.properties.centre.split(",");
+                    markerGroup.eachLayer(function(layer){
+                        map.removeLayer(layer); 
+                       
+                  }); 
+                  marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
+                  marker.addTo(markerGroup);
+                  marker.addTo(map);
 
+            });
+            };
+        }
+    };
 
+})
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
 initMap();
 
 map.on('popupopen', function(feature){
