@@ -3,8 +3,6 @@ var areaData = [];
 var imageData = [];
 var layerData =[];
 let map;
-var authenication;
-let authToken;
 var markerGroup = L.layerGroup(); 
 var activeSearch = false; 
 var searchQ = [];
@@ -26,7 +24,7 @@ function initMap(){
         addToMap(imageData[x]);
     }
     console.log("All missions have been added to map");
-}, 7000);
+}, 10000);
 }
 function addCountiesToMap(){
     var myStyle = {
@@ -176,20 +174,56 @@ hidden.download = 'areadata.csv';
 hidden.click();  
 }
 function getHistogram(){
-// using plot.ly
-
-var trace = {
-x: areaData,
-type: 'histogram',
-};
-var data = [trace];
-Plotly.newPlot('histogramDisplay', data);
+    // using plot.ly
+    var trace = {
+        x: areaData,
+        type: 'histogram',
+        marker: {
+            color: '#0D3B66'
+        }
+    };
+    Plotly.newPlot('histogramDisplay', [trace], {
+        plot_bgcolor: '#F95738',
+        paper_bgcolor: '#F95738',
+      })
+      .then(() => {
+        return Plotly.toImage(gd, {setBackground: setBackground})
+      })
+      .then(src => {
+        im.src = src
+      });
 }
 ///////////////////SEARCH BAR///////////////////
-function searchMissionID(searchQ){
-    //gets the GeoJson data from each id in the searchQ, then adds them to the map along with a marker 
-    var currentMissionID; 
-    var qArea = []; 
+function getMissionById(id){
+    markerGroup.eachLayer(function(layer){
+        map.removeLayer(layer);
+    });
+
+    var mytbl = document.getElementById("polyIDtable");
+    mytbl.getElementsByTagName("tbody")[0].innerHTML = mytbl.rows[0].innerHTML;
+
+
+    //activeSearch set to true, to show search is in progress
+    activeSearch = true; 
+    //remove all map layers but add back counties 
+    for(var x = 0; x < layerData.length; x++){
+        map.removeLayer(layerData[x]);
+    }
+    addCountiesToMap();
+    //searchQ array for missionID results 
+    searchQ = [];
+    //bool for is a missionID is found 
+    missionIDfound = false;
+
+    //searching for missionID, if found each poly id present in that mission will be pushed to searchQ
+    for(var x = 0; x < imageData.length; x++){
+        if(id == imageData[x].properties.missionid){
+            missionIDfound = true; 
+            searchQ.push(imageData[x].properties.id); 
+        }
+    } 
+    if(missionIDfound){
+        //gets the GeoJson data from each id in the searchQ, then adds them to the map along with a marker 
         for(var x = 0; x < searchQ.length; x++){
             getProductFromImageData(searchQ[x], function(geoJSONdata){
                 addToMap(geoJSONdata);
@@ -224,8 +258,8 @@ function searchMissionID(searchQ){
         areaTotal = Math.ceil(areaTotal); 
         
         //displays the amount of id's present in searchQ to the user 
-        if(searchQ.length > 1) document.getElementById("results").textContent = searchQ.length + " Results found";
-        else document.getElementById("results").textContent = searchQ.length + " Result found";
+        /*if(searchQ.length > 1) document.getElementById("results").textContent = searchQ.length + " Results found";
+        else document.getElementById("results").textContent = searchQ.length + " Result found";*/
 
         //updating meta data
         document.getElementById('metaMissionID').textContent = 'Current Mission ID: ' + currentMissionID;
@@ -234,6 +268,8 @@ function searchMissionID(searchQ){
 
     
     
+        if(searchQ.length > 1) document.getElementById("results").innerHTML = "&#8618; " + searchQ.length + " Results found";
+        else document.getElementById("results").innerHTML = "&#8618; " + searchQ.length + " Result found";
         
         //adds each element in searchQ to the IDsearch table
         var tabBody = document.getElementsByTagName("tbody").item(0);
@@ -358,7 +394,7 @@ document.addEventListener('click', function(event){
         }
     };
 
-})
+});
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }

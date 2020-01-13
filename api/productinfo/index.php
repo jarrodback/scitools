@@ -1,5 +1,4 @@
 <?php  
-
 function getProductJSON(){
       $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
       if($contentType === "plain/text")
@@ -21,6 +20,9 @@ function getProductJSON(){
         $response = curl_exec($curl);
         curl_close($curl);
         $data = json_decode($response);
+        $datemodified =date ('Y-m-d H:i:s', $data->product->result->datemodified/1000);
+        $datecreated =date ('Y-m-d H:i:s', $data->product->result->datecreated/1000);
+        
         $jsonData = array(
           "type" => "Feature",
           "properties" => array(
@@ -29,11 +31,12 @@ function getProductJSON(){
             "area" => "NaN",
             "percentage" => "NaN",
             "id" =>  $id,
-            "centre" =>  $data->product->result->centre
+            "centre" =>  $data->product->result->centre,
+            "datemodified" => $datemodified,
+            "datecreated" => $datecreated
           ),
           "geometry" => $data->product->result->footprint
         );
-        //$test = json_decode($jsonData);
         $test1 = json_encode($jsonData);
         echo $test1;
       }
