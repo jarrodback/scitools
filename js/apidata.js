@@ -9,6 +9,107 @@ var markerGroup = L.layerGroup();
 var activeSearch = false; 
 var searchQ = [];
 
+function initMap(){
+    console.log("init");
+
+  map = L.map('map').setView([54.3138, -2.169], 6);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 9,
+    minZoom: 6
+  }).addTo(map);
+  addCountiesToMap();
+  authenticate();
+
+  getProductGeoJSONPHP();
+  setTimeout(function(){ 
+    console.log(imageData.length);
+    for(var x = 0; x < imageData.length; x++){
+        imageData[x].properties.area = (turf.area(turf.polygon(imageData[x].geometry.coordinates))/1000000);
+        imageData[x].properties.percentage = (imageData[x].properties.area / areaOfUk) * 100;
+        console.log("AREA: " + imageData[x].properties.area + " Percentage: " + imageData[x].properties.percentage);
+        addToMap(imageData[x]);
+    }
+}, 10000);
+}
+function addCountiesToMap(){
+    console.log("adding");
+
+    var myStyle = {
+        "stroke": true,
+        "color": "#ff0000",
+        "weight": 1,
+        "fill": true,
+        "fillOpacity": 0,
+        "opacity": 1
+    };
+    var geojsonLayer = new L.GeoJSON.AJAX("data/ukcounties.geojson", {
+        style:myStyle, 
+        onEachFeature: function onEachFeature(feature, layer){
+            layer.bindPopup("Region: " + feature.properties.name);
+        }
+    });
+    geojsonLayer.addTo(map);
+}
+
+//API CALLS//
+function getTokenPHP(){
+    return fetch('api/token/', {
+        method: 'get',
+        headers : new Headers({
+            'token' : true
+        })
+    })
+    .then(function(response){
+        return response.text().then(function(text){
+            return text;
+        });
+    });
+}
+function getProductSearchPHP(){
+    return getToken().then(function (result){
+       // result is api key
+        return fetch('api/productsearch/', {
+            method: 'POST',
+            mode: "same-origin",
+            credentials: "same-origin",
+            headers : new Headers({
+                'Content-Type' : 'plain/text'
+            }),
+            body: result
+        })
+        .then(function(response){
+            return response.text();
+                //text is array of ids
+        });
+    });
+}
+function getProductGeoJSONPHP(){
+     getToken().then(function(result){
+        //result is api key
+         getProductSearch().then(function(idarray){
+            //idarray is array of ids
+            var json = JSON.parse(idarray);
+            for(var x=0; x < json.length; x++){
+                var body = json[x].id + " " + result;
+                 fetch('api/productinfo/', {
+                    method: 'POST',
+                    mode: "same-origin",
+                    credentials: "same-origin",
+                    headers : new Headers({
+                        'Content-Type' : 'plain/text'
+                    }),
+                    body: body
+                })
+                .then(function(response){
+                    response.json().then(function(json){
+                        imageData.push(json);
+                    });
+                })
+            }
+        });
+    });
+}
+
 
 function authenticate(){
     data = new FormData();
@@ -33,36 +134,7 @@ function authenticate(){
             }
         }
 }
-function initMap(){
-    console.log("init");
 
-  map = L.map('map').setView([54.3138, -2.169], 6);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 9,
-    minZoom: 6
-  }).addTo(map);
-  addCountiesToMap();
-  authenticate();
-}
-function addCountiesToMap(){
-    console.log("adding");
-
-    var myStyle = {
-        "stroke": true,
-        "color": "#ff0000",
-        "weight": 1,
-        "fill": true,
-        "fillOpacity": 0,
-        "opacity": 1
-    };
-    var geojsonLayer = new L.GeoJSON.AJAX("data/ukcounties.geojson", {
-        style:myStyle, 
-        onEachFeature: function onEachFeature(feature, layer){
-            layer.bindPopup("Region: " + feature.properties.name);
-        }
-    });
-    geojsonLayer.addTo(map);
-}
 function getProducts() {
     const postBody = "{\"size\":100, \"keywords\":\"\"}";//, \"strings\":[{\"field\":\"sceneimagery\",\"value\":[\"*\"],\"operator\":\"or\"}]}";
     let request = new XMLHttpRequest();
