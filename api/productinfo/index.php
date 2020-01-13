@@ -37,7 +37,6 @@ function getProductJSON(){
           ),
           "geometry" => $data->product->result->footprint
         );
-        $test = json_decode($jsonData);
         $test1 = json_encode($jsonData);
         echo $test1;
       }
