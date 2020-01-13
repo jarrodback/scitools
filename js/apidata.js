@@ -3,50 +3,30 @@ var areaData = [];
 var imageData = [];
 var layerData =[];
 let map;
-var authenication;
-let authToken;
 var markerGroup = L.layerGroup(); 
 var activeSearch = false; 
 var searchQ = [];
 
-
-function authenticate(){
-    data = new FormData();
-    data.set('grant_type', 'password');
-    data.set('username', 'Hallam1');
-    data.set('password', 'dn2-fJSL');
-    const postBody = "grant_type=password&username=Hallam1&password=dn2-fJSL";
-    let request = new XMLHttpRequest();
-    request.open('POST','https://hallam.sci-toolset.com/api/v1/token', true);
-    request.send(data);
-    request.onreadystatechange = function() {
-        if (request.readyState === 4  && request.status === 200){
-            var json = JSON.parse(request.responseText);
-            authenication = {
-                "access_token" : json.access_token,
-                "refresh_token" : json.refresh_token,
-                "expires_in" : json.expires_in
-
-            };
-            authToken = 'Bearer ' + authenication.access_token;
-            getProducts();
-            }
-        }
-}
+///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 function initMap(){
-    console.log("init");
-
   map = L.map('map').setView([54.3138, -2.169], 6);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 9,
     minZoom: 6
   }).addTo(map);
   addCountiesToMap();
-  authenticate();
+
+  getProductGeoJSONPHP();
+  setTimeout(function(){ 
+    for(var x = 0; x < imageData.length; x++){
+        imageData[x].properties.area = (turf.area(turf.polygon(imageData[x].geometry.coordinates))/1000000);
+        imageData[x].properties.percentage = (imageData[x].properties.area / areaOfUk) * 100;
+        addToMap(imageData[x]);
+    }
+    console.log("All missions have been added to map");
+}, 10000);
 }
 function addCountiesToMap(){
-    console.log("adding");
-
     var myStyle = {
         "stroke": true,
         "color": "#ff0000",
@@ -62,39 +42,156 @@ function addCountiesToMap(){
         }
     });
     geojsonLayer.addTo(map);
+    console.log("Regional data has been added to the map");
 }
-function getProducts() {
-    const postBody = "{\"size\":100, \"keywords\":\"\"}";//, \"strings\":[{\"field\":\"sceneimagery\",\"value\":[\"*\"],\"operator\":\"or\"}]}";
-    let request = new XMLHttpRequest();
-    request.open('POST','https://hallam.sci-toolset.com/discover/api/v1/products/search',true);
-    request.setRequestHeader('Content-Type', 'application/json');
-    request.setRequestHeader('Authorization', authToken);
-    request.setRequestHeader('Accept', '*/*');
-    request.send(postBody);
-    request.onreadystatechange = function() {
-        if (request.readyState === 4  && request.status === 200){
-            var json = JSON.parse(request.responseText);
-            console.log(json.results.searchresults.length);
-           
-            for(var x = 0; x < json.results.searchresults.length; x++){
-                getGeoJson(json.results.searchresults[x].id,function(geoJSONdata){
-                    console.log(x);
-                addToMap(geoJSONdata);
-
-            
-                imageData.push(geoJSONdata)
-                });
+function addToMap(data){
+    L.geoJSON(data, {
+        onEachFeature: function(feature, layer){ 
+            layerData.push(layer);
+            layer.bindPopup("Mission ID: " + feature.properties.missionid
+            + '<br>Area: ' + parseFloat(feature.properties.area.toFixed(2)) + "km²" 
+            + '<br>Percentage Covered: ' + parseFloat(feature.properties.percentage.toFixed(6)) + "%"
+            + '<br>ID: ' + feature.properties.id
+            + '<br><a href="#" class="popupSearchMissionId">Search this Mission</a>'
+            + '<br><a href="#" class="popupSearchPolygonId">Search this ID</a>');
+        }
+    }).addTo(map);
+}
+function repopulateMap(){
+    for(var x = 0; x < imageData.length; x++){
+        console.log(imageData[x]);
+        addToMap(imageData[x]);
+    }
+}
+///////////////////API CALLS///////////////////
+function getTokenPHP(){
+    return fetch('api/token/', {
+        method: 'get',
+        headers : new Headers({
+            'token' : true
+        })
+    })
+    .then(function(response){
+        return response.text().then(function(text){
+            return text;
+        });
+    });
+}
+function getProductSearchPHP(){
+    return getTokenPHP().then(function (result){
+       // result is api key
+        return fetch('api/productsearch/', {
+            method: 'POST',
+            mode: "same-origin",
+            credentials: "same-origin",
+            headers : new Headers({
+                'Content-Type' : 'plain/text'
+            }),
+            body: result
+        })
+        .then(function(response){
+            return response.text();
+                //text is array of ids
+        });
+    });
+}
+function getProductGeoJSONPHP(){
+     getTokenPHP().then(function(result){
+        //result is api key
+         getProductSearchPHP().then(function(idarray){
+            //idarray is array of ids
+            var json = JSON.parse(idarray);
+            for(var x=0; x < json.length; x++){
+                var body = json[x].id + " " + result;
+                 fetch('api/productinfo/', {
+                    method: 'POST',
+                    mode: "same-origin",
+                    credentials: "same-origin",
+                    headers : new Headers({
+                        'Content-Type' : 'plain/text'
+                    }),
+                    body: body
+                })
+                .then(function(response){
+                    response.json().then(function(json){
+                        imageData.push(json);
+                    });
+                })
             }
+        });
+    });
+}
+function getProductByIDPHP(id, callback){
+    getTokenPHP().then(function(result){
+        var body = id + " " + result;
+        fetch('api/productinfo/', {
+        method: 'POST',
+        mode: "same-origin",
+        credentials: "same-origin",
+        headers : new Headers({
+            'Content-Type' : 'plain/text'
+        }),
+        body: body
+    })
+    .then(function(response){
+        response.json().then(function(json){
+            console.log("The getproductbyidphp result: " + json);
+            callback(json);
+        });
+    })
+    });
+}
+function getProductFromImageData(id, callback){
+    for(var x=0; x<imageData.length; x++){
+        if(imageData[x].properties.id == id){
+            callback(imageData[x]);
         }
     }
 }
+///////////////////HISTOGRAM///////////////////
+function dataSort(){
+    //sorting the areas in ascending order
+    areaData.sort(function(a,b){return a-b});
+    /* for( var x = 0; x < areaData.length; x++){
+        console.log(areaData[x]);
+    }  */  
+    window.alert("Data Sorted");
+    console.log("Sorted!");
+}
+function saveToCSV(){
+console.log("Downloading");
+var csv = 'AREA\n';
+areaData.forEach(function(row){
+console.log(row);
+csv += row;
+csv += "\n";
+});
+console.log(csv);
+var hidden = document.createElement('a');
+hidden.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+hidden.target = '_blank';
+hidden.download = 'areadata.csv';
+hidden.click();  
+}
+function getHistogram(){
+// using plot.ly
+
+var trace = {
+x: areaData,
+type: 'histogram',
+};
+var data = [trace];
+Plotly.newPlot('histogramDisplay', data);
+}
+///////////////////SEARCH BAR///////////////////
 function getMissionById(id){
     markerGroup.eachLayer(function(layer){
-            map.removeLayer(layer); 
+        map.removeLayer(layer);
     });
-    //resets the poly ID search table 
+
     var mytbl = document.getElementById("polyIDtable");
-    mytbl.getElementsByTagName("tbody")[0].innerHTML = mytbl.rows[0].innerHTML;    
+    mytbl.getElementsByTagName("tbody")[0].innerHTML = mytbl.rows[0].innerHTML;
+
 
     //activeSearch set to true, to show search is in progress
     activeSearch = true; 
@@ -107,20 +204,18 @@ function getMissionById(id){
     searchQ = [];
     //bool for is a missionID is found 
     missionIDfound = false;
-    console.log(imageData);
 
     //searching for missionID, if found each poly id present in that mission will be pushed to searchQ
     for(var x = 0; x < imageData.length; x++){
         if(id == imageData[x].properties.missionid){
             missionIDfound = true; 
-            console.log(imageData[x].properties.missionid);
             searchQ.push(imageData[x].properties.id); 
         }
     } 
     if(missionIDfound){
         //gets the GeoJson data from each id in the searchQ, then adds them to the map along with a marker 
         for(var x = 0; x < searchQ.length; x++){
-            getGeoJson(searchQ[x], function(geoJSONdata){
+            getProductFromImageData(searchQ[x], function(geoJSONdata){
                 addToMap(geoJSONdata);
                 var mapLocation = geoJSONdata.properties.centre.split(",");
                 marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
@@ -139,8 +234,6 @@ function getMissionById(id){
         
         //adds each element in searchQ to the IDsearch table
         var tabBody = document.getElementsByTagName("tbody").item(0);
-        console.log(searchQ); 
-      
         for(var x = 0; x < searchQ.length; x++){
             var row = document.createElement("tr");
             var cell1 = document.createElement("td");
@@ -152,6 +245,7 @@ function getMissionById(id){
             //IDsearch button identifiers: class 'idQsearch', id 'idQsearch' + numberOfButton   
             buttonnode.className = "idQsearch";  
             buttonnode.id = 'idQsearch' + x; 
+
             cell1.appendChild(textnode);
             cell2.appendChild(buttonnode); 
             row.appendChild(cell1);
@@ -163,7 +257,7 @@ function getMissionById(id){
     }else{
         //hides IDsearch table since only polygon ID is being loaded 
         document.getElementById("polyIDtable").hidden = true;
-        getGeoJson(id, function(geoJSONdata){
+        getProductFromImageData(id, function(geoJSONdata){
             addToMap(geoJSONdata);
             var mapLocation = geoJSONdata.properties.centre.split(",");
             markerGroup.eachLayer(function(layer){
@@ -181,135 +275,6 @@ function getMissionById(id){
     });
     }
 }
-function getGeoJson(id, callback){
-    //console.log(id);
-    let request = new XMLHttpRequest();
-    request.open('GET','https://hallam.sci-toolset.com/discover/api/v1/products/' + id, true);
-    request.setRequestHeader('Content-Type', 'application/json');
-    request.setRequestHeader('Authorization', authToken);
-    request.setRequestHeader('Accept', '*/*');
-    request.send(null);
-    request.onreadystatechange = function() {
-        if (request.readyState === 4 && request.status === 200){
-            var json = JSON.parse(request.responseText);
-            var area = turf.area(turf.polygon(json.product.result.footprint.coordinates));
-            area = ((area/1000000));
-            areaData.push(area);
-            var percentage = (area/areaOfUk)*100;
-            var geojson = 
-            {
-                "type": "Feature",
-                "properties" : {
-                     "missionid" : json.product.result.missionid,
-                     "documentType" : json.product.result.documentType,
-                     "area" : area,
-                     "percentage": percentage,
-                     "id" : id,
-                     "centre": json.product.result.centre
-                },
-                "geometry" : json.product.result.footprint
-            };
-            callback(geojson);
-        }
-    }
-}
-function addToMap(data){
-    L.geoJSON(data, {
-        onEachFeature: function(feature, layer) {
-            layerData.push(layer);
-            layer.bindPopup("Mission ID: " + feature.properties.missionid
-            + '<br>Area: ' + parseFloat(feature.properties.area.toFixed(2)) + "km²" 
-            + '<br>Percentage Covered: ' + parseFloat(feature.properties.percentage.toFixed(6)) + "%"
-            + '<br>ID: ' + feature.properties.id
-            + '<br><a href="#" class="popupSearchMissionId">Search this Mission</a>'
-            + '<br><a href="#" class="popupSearchPolygonId">Search this ID</a>');
-        }
-    }).addTo(map);
-}
-function dataSort(){
-            //sorting the areas in ascending order
-            areaData.sort(function(a,b){return a-b});
-            /* for( var x = 0; x < areaData.length; x++){
-                console.log(areaData[x]);
-            }  */  
-            window.alert("Data Sorted");
-            console.log("Sorted!");
-}
-function saveToCSV(){
-    console.log("Downloading");
-        var csv = 'AREA\n';
-        areaData.forEach(function(row){
-        console.log(row);
-        csv += row;
-        csv += "\n";
-    });
-        console.log(csv);
-        var hidden = document.createElement('a');
-        hidden.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-        hidden.target = '_blank';
-        hidden.download = 'areadata.csv';
-        hidden.click();  
-}
-function getHistogram(){
-    // using plot.ly
-    var trace = {
-        x: areaData,
-        type: 'histogram',
-        marker: {
-            color: '#0D3B66'
-        }
-    };
-    Plotly.newPlot('histogramDisplay', [trace], {
-        plot_bgcolor: '#F95738',
-        paper_bgcolor: '#F95738',
-      })
-      .then(() => {
-        return Plotly.toImage(gd, {setBackground: setBackground})
-      })
-      .then(src => {
-        im.src = src
-      })
-}
-var specElement = document.getElementById("searchbar");
-var sidebar = document.getElementById("sidebar");
-
-
-
-//mouse click event listener 
-document.addEventListener('click', function(event){
-    //checks if search is being cancelled by clicking inside the search bar
-    var isClickInside = specElement.contains(event.target);    
-    if(isClickInside && activeSearch){
-        resetData();
-        //reload products 
-        getProducts(); 
-    }
-    //if the event clicked is a idQsearch button 
-    if(event.toElement.className == 'idQsearch'){
-        //finds the correct button and corresponding polygon ID
-        console.log(event);
-        for(var x = 0; x < searchQ.length; x++){
-            //if found set marker on polygon
-            if(event.toElement.id == 'idQsearch' + x){
-                var mapLocation = '';
-                console.log(searchQ[x]);
-                getGeoJson(searchQ[x], function(geoJSONdata){
-                    console.log(geoJSONdata);
-                    mapLocation = geoJSONdata.properties.centre.split(",");
-                    markerGroup.eachLayer(function(layer){
-                    map.removeLayer(layer); 
-                    marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
-                    marker.addTo(markerGroup);
-                    marker.addTo(map);
-                }); 
-
-            });
-            };
-        }
-    };
-
-})
-
 function resetData(){
     //reset map view, clear markers and clear searchQ
         map.setView([54.3138, -2.169], 6);
@@ -323,17 +288,47 @@ function resetData(){
         }
         //reset imageData and change result's found to 0 
         activeSearch = false; 
-        imageData = [];
-        document.getElementById("results").innerHTML = "&#8618; 0 Result found";
+        document.getElementById("results").textContent = "0 Result found";
         document.getElementById("polyIDtable").hidden = true; 
 };
 
+var specElement = document.getElementById("searchbar");
+var sidebar = document.getElementById("sidebar");
+document.addEventListener('click', function(event){
+    //checks if search is being cancelled by clicking inside the search bar
+    var isClickInside = specElement.contains(event.target);    
+    if(isClickInside && activeSearch){
+        resetData();
+        //reload products 
+        repopulateMap();
+    }
+    //if the event clicked is a idQsearch button 
+    if(event.target.className == 'idQsearch'){
+        //finds the correct button and corresponding polygon ID
+        for(var x = 0; x < searchQ.length; x++){
+            //if found set marker on polygon
+            if(event.target.id == 'idQsearch' + x){
+                
+                var mapLocation;
+                getProductFromImageData(searchQ[x], function(geoJSONdata){
+                    mapLocation = geoJSONdata.properties.centre.split(",");
+                    markerGroup.eachLayer(function(layer){
+                        map.removeLayer(layer); 
+                       
+                  }); 
+                  marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
+                  marker.addTo(markerGroup);
+                  marker.addTo(map);
 
+            });
+            };
+        }
+    };
 
+})
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
 initMap();
 
 map.on('popupopen', function(feature){
