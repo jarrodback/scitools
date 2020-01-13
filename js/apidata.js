@@ -13,6 +13,25 @@ var aftr_loadtime
 var countiesLength = 0;
 var feaytslength = 0;
 var totalmissions = 0;
+var countiesData;
+var ukbordersData;
+
+fetch('data/ukcounties.geojson')
+    .then(Response => Response.text())
+    .then((data) => {
+        countiesData = JSON.parse(data);
+    }
+    )
+
+
+
+fetch('data/ukBorders.geojson')
+    .then(Response => Response.text())
+    .then((data) => {
+        ukbordersData = JSON.parse(data);
+    }
+    )
+
 function authenticate() {
     data = new FormData();
     data.set('grant_type', 'password');
@@ -85,11 +104,12 @@ function getProducts() {
                     missionsInCounties(geoJSONdata);
 
                 });
-                
+
             }
+
         }
     }
-    
+
 
 }
 function getMissionById(id) {
@@ -169,60 +189,34 @@ document.addEventListener('click', function (event) {
         specElement.value = '';
     }
 })
-function missionsInCounties(missionGeoJSON) {
-    fetch('data/ukcounties.geojson')
-        .then(Response => Response.text())
-        .then((data) => {
-            feats = JSON.parse(data);
-            fetch('data/ukBorders.geojson')
-                .then(Response => Response.text())
-                .then((data) => {
-                    ukborder = JSON.parse(data);
-                    if (arrcreated == false) {
-                        for (var i = 0; i < feats.features.length; i++) {
-                            counties.push({ name: feats.features[i].properties.name, missionsInside: 0 });
-                        }
-                    }
-                    arrcreated = true;
-                    //console.log(missionGeoJSON.geometry.coordinates)
-                    
-                    for (var i = 0; i < feats.features.length; i++) {
-                        for (var j = 0; j < missionGeoJSON.geometry.coordinates[0].length; j = j + 144) {
-                            if (d3.geoContains(feats.features[i], missionGeoJSON.geometry.coordinates[0][j])) {
-                                for (var p = 0; p < counties.length; p++) {
-                                    if (feats.features[i].properties.name === counties[p].name) {
-                                        counties[p].missionsInside++;
-                                        totalmissions++;
-                                    }
+function missionsInCounties(missionGeoJSON) {           //Function that calculates the percentage of missions inside of a county divided by the total amount of missions
 
-                                }
+    if (arrcreated == false) {          // if the array has been created dont create a new one
+        for (var i = 0; i < countiesData.features.length; i++) {            //create a array the size of the amount of countys
+            counties.push({ name: countiesData.features[i].properties.name, missionsInside: 0 });       //push starting values to the array
+        }
+        arrcreated = true;      //after the array has been created make it unable to create another
+    }
 
-
-                            }
-                            if (!d3.geoContains(ukborder.features, missionGeoJSON.geometry.coordinates[0][j])) {
-                                intWaters++;
-                                console.log(missionGeoJSON.geometry.coordinates[0][j] + " is not in the uk");
-                            }
-                            totalmissions++;
-                        }
-
-                        aftr_loadtime = new Date().getTime();
-                        pgloadtime = (aftr_loadtime - before_load) / 1000
-                    console.log(counties)
-                        
-                        //console.log(pgloadtime);
-                        //console.log(intWaters);
-                        //console.log(totalmissions);
-                        for (var q = 0; q < counties.length; q++) {
-                            console.log(counties[q].name + " has " + (((counties[q].missionsInside / totalmissions) * 100).toFixed(2)) + "% missions in it")
-                        }
-                        console.log("There are " + ((intWaters / totalmissions) * 100).toFixed(2) + "% of Missions in international water")
-                        
+    for (var i = 0; i < countiesData.features.length; i++) {   //For the amount of counties loop
+        for (var j = 0; j < missionGeoJSON.geometry.coordinates[0].length; j = j + 4) {         //for the amount of coordinates in the mission GEOjson loop
+            if (d3.geoContains(countiesData.features[i], missionGeoJSON.geometry.coordinates[0][j])) {     // d3 check to see if it is in a county
+                for (var p = 0; p < counties.length - 1; p++) {     //loop for the amount of counties there are minus international waters
+                    if (countiesData.features[i].properties.name === counties[p].name) {    //if it is in a county add 1 to the county mission counter
+                        counties[p].missionsInside++;
+                        totalmissions++;
                     }
                 }
-                )
+            }
         }
-        )
+
+        aftr_loadtime = new Date().getTime();       //code to work out total load time (testing)
+        pgloadtime = (aftr_loadtime - before_load) / 1000
+        console.log(pgloadtime);
+        for (var q = 0; q < counties.length; q++) { // loop calculates the percentage that each mission uses to 2 decimal places
+            console.log(counties[q].name + " has " + (((counties[q].missionsInside / totalmissions) * 100).toFixed(1)) + "% missions in it")
+        }
+    }
 }
 
 
