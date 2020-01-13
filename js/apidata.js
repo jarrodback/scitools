@@ -306,11 +306,11 @@ document.addEventListener('click', function(event){
         repopulateMap();
     }
     //if the event clicked is a idQsearch button 
-    if(event.toElement.className == 'idQsearch'){
+    if(event.target.className == 'idQsearch'){
         //finds the correct button and corresponding polygon ID
         for(var x = 0; x < searchQ.length; x++){
             //if found set marker on polygon
-            if(event.toElement.id == 'idQsearch' + x){
+            if(event.target.id == 'idQsearch' + x){
                 
                 var mapLocation;
                 getProductFromImageData(searchQ[x], function(geoJSONdata){
