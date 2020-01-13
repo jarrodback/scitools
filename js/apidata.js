@@ -7,6 +7,8 @@ var authenication;
 let authToken;
 var markerGroup = L.layerGroup(); 
 var activeSearch = false; 
+var searchQ = [];
+
 
 function authenticate(){
     data = new FormData();
@@ -87,24 +89,20 @@ function getProducts() {
     }
 }
 function getMissionById(id){
+    //activeSearch set to true, to show search is in progress
     activeSearch = true; 
+    //remove all map layers but add back counties 
     for(var x = 0; x < layerData.length; x++){
         map.removeLayer(layerData[x]);
     }
     addCountiesToMap();
-
-    var searchQ = [];
+    //searchQ array for missionID results 
+    searchQ = [];
+    //bool for is a missionID is found 
     missionIDfound = false;
-    console.log(imageData); 
-    //Check if the missionID is given, if so display all polygons with that ID
-    /*
-    for(var x = 0; x < missionDict.length; x++){
-        if(id == missionDict[x].missionid){
-            missionIDfound = true; 
-            searchQ.push(missionDict[x].searchid);
-        }
-    }*/
+    console.log(imageData);
 
+    //searching for missionID, if found each poly id present in that mission will be pushed to searchQ
     for(var x = 0; x < imageData.length; x++){
         if(id == imageData[x].properties.missionid){
             missionIDfound = true; 
@@ -112,56 +110,70 @@ function getMissionById(id){
             searchQ.push(imageData[x].properties.id); 
         }
     } 
-
     if(missionIDfound){
+        //gets the GeoJson data from each id in the searchQ, then adds them to the map along with a marker 
         for(var x = 0; x < searchQ.length; x++){
             getGeoJson(searchQ[x], function(geoJSONdata){
                 addToMap(geoJSONdata);
                 var mapLocation = geoJSONdata.properties.centre.split(",");
-        
                 marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
                 marker.addTo(markerGroup); 
                 marker.addTo(map);
             });
         }
-        //zoom out to see all missions
+        //when all id's added zooms the map out to default view 
         var zoomScale = map.getZoom(); 
         if(zoomScale > 6) map.zoomOut(6);
         map.setView([54.3138, -2.169], 6);
 
+        //displays the amount of id's present in searchQ to the user 
         if(searchQ.length > 1) document.getElementById("results").textContent = searchQ.length + " Results found";
         else document.getElementById("results").textContent = searchQ.length + " Result found";
         
-
-        //PUT POLYGON ID'S IN TABLE
+        //adds each element in searchQ to the IDsearch table
         var tabBody = document.getElementsByTagName("tbody").item(0);
-
+        console.log(searchQ); 
+ 
         for(var x = 0; x < searchQ.length; x++){
             var row = document.createElement("tr");
             var cell1 = document.createElement("td");
             var cell2 = document.createElement("td"); 
-
             var textnode = document.createTextNode(searchQ[x]);
-            var buttonnode = document.createElement("button");
             
-            buttonnode.innerHTML = "View"; 
-            //buttonnode.setAttribute( "onClick", "getMissionById(searchQ[x]);" )
+            //IDsearch button setup
+            var buttonnode = document.createElement("button");
+            buttonnode.innerHTML = "View";
+            buttonnode.className = "idQsearch";  
+    
+
+      
+            buttonnode.id = 'idQsearch' + x; 
+      
+      
+
+            
+
             cell1.appendChild(textnode);
             cell2.appendChild(buttonnode); 
-
             row.appendChild(cell1);
             row.appendChild(cell2);
             tabBody.appendChild(row); 
-       
         }
+    
+       
+
+        //displays the IDsearch table once all the id's have been loaded in
         document.getElementById("polyIDtable").hidden = false; 
     }else{
-    getGeoJson(id, function(geoJSONdata){
-        addToMap(geoJSONdata);
-        var mapLocation = geoJSONdata.properties.centre.split(",");
-         markerGroup.eachLayer(function(layer){
+        //hides IDsearch table since only polygon ID is being loaded 
+        document.getElementById("polyIDtable").hidden = true;
+        getGeoJson(id, function(geoJSONdata){
+            addToMap(geoJSONdata);
+            var mapLocation = geoJSONdata.properties.centre.split(",");
+            markerGroup.eachLayer(function(layer){
             map.removeLayer(layer); 
         });
+        //add marker and pan map over to the polygon 
         marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
         marker.addTo(markerGroup);
         marker.addTo(map);
@@ -169,8 +181,7 @@ function getMissionById(id){
         
         sleep(700).then(() => {
         map.zoomIn(4);
-        })
-        document.getElementById("polyIDtable").hidden = true; 
+        }) 
     });
     }
 }
@@ -244,56 +255,14 @@ function saveToCSV(){
         hidden.click();  
 }
 function getHistogram(){
-    // using d3.js
-    // graph dimensions
-    var margin = {top:10, right: 30, bottom: 30, left: 40 },
-        width = 460 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
+    // using plot.ly
 
-    var x = d3.scaleLinear()
-    .domain([0,1000])
-    .range([0,width]);
-
-    var y = d3.scaleLinear()
-    .range([height,0])
-    y.domain([0, height]);
-
-    
-    var histogram = d3.histogram()
-    .value(function(d) { return d.price; })
-    .domain(x.domain())
-    .thresholds(x.ticks(70));
-
-    var svg = d3.select("#histogramDisplay").append("svg")
-        .attr("width",width + margin.left + margin.right)
-        .attr("height",height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform","translate("+ margin.left + "," + margin.top + ")");
-
-    d3.csv("http://192.168.17.1:8887/data/areadata.csv").then(function(data){
-        for(var i = 0; i < data.length; i++){
-            console.log(data[i])
-        }
-
-    var bins = histogram(data);
-
-
-    svg.selectAll("rect")
-    .data(bins)
-    .enter().append("rect")
-        .attr("x",1)
-        .attr("transform", function(d) {return "translate(" +x(d.x0) + "," + y(d.length) + ")";})
-        .attr("width", function(d) {return x(d.x1) - x(d.x0) - 1;})
-        .attr("height", function(d) {return height - y(d.length);})
-        .style("fill", "#000000")
-    })
-    
-    svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
-
-    svg.append("g")
-    .call(d3.axisLeft(y));
+    var trace = {
+        x: areaData,
+        type: 'histogram',
+    };
+    var data = [trace];
+    Plotly.newPlot('histogramDisplay', data);
 }
 var specElement = document.getElementById("searchbar");
 var sidebar = document.getElementById("sidebar");
@@ -301,7 +270,7 @@ var sidebar = document.getElementById("sidebar");
 
 
 
-//REFRESH MISSIONS AFTER SEARCH WHEN SEARCH BAR IS CLICKED 
+//reloads all polygons onto map when the searchbar is clicked
 document.addEventListener('click', function(event){
     var isClickInside = specElement.contains(event.target);    
     if(isClickInside && activeSearch){
@@ -321,6 +290,39 @@ document.addEventListener('click', function(event){
 
         getProducts(); 
     }
+
+    if(event.toElement.className == 'idQsearch'){
+        //idsearchQ logic
+        for(var x = 0; x < searchQ.length; x++){
+            
+            if(event.toElement.id == 'idQsearch' + x){
+                
+                var mapLocation;
+                console.log(searchQ[x]);
+                getGeoJson(searchQ[x], function(geoJSONdata){
+                    console.log(geoJSONdata);
+                    addToMap(geoJSONdata);
+                    mapLocation = geoJSONdata.properties.centre.split(",");
+                    markerGroup.eachLayer(function(layer){
+                    map.removeLayer(layer); 
+
+                    //add marker and pan map over to the polygon 
+                    marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
+                    marker.addTo(markerGroup);
+                    marker.addTo(map);
+                    map.flyTo({lat: mapLocation[0], lng: mapLocation[1]});
+            }); 
+
+                });
+                
+        
+        
+        sleep(700).then(() => {
+        map.zoomIn(4);
+        }) 
+            };
+        }
+    };
 
 })
 function sleep(ms) {
