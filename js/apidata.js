@@ -93,7 +93,7 @@ function getMissionById(id){
     }
     addCountiesToMap();
 
-    searchQ = [];
+    var searchQ = [];
     missionIDfound = false;
     console.log(imageData); 
     //Check if the missionID is given, if so display all polygons with that ID
@@ -139,11 +139,20 @@ function getMissionById(id){
         for(var x = 0; x < searchQ.length; x++){
             var row = document.createElement("tr");
             var cell1 = document.createElement("td");
+            var cell2 = document.createElement("td"); 
 
             var textnode = document.createTextNode(searchQ[x]);
+            var buttonnode = document.createElement("button");
+            
+            buttonnode.innerHTML = "View"; 
+            //buttonnode.setAttribute( "onClick", "getMissionById(searchQ[x]);" )
             cell1.appendChild(textnode);
-            row.appendChild(cell1)
+            cell2.appendChild(buttonnode); 
+
+            row.appendChild(cell1);
+            row.appendChild(cell2);
             tabBody.appendChild(row); 
+       
         }
         document.getElementById("polyIDtable").hidden = false; 
     }else{
@@ -204,7 +213,9 @@ function addToMap(data){
             layer.bindPopup("Mission ID: " + feature.properties.missionid
             + '<br>Area: ' + parseFloat(feature.properties.area.toFixed(2)) + "km²" 
             + '<br>Percentage Covered: ' + parseFloat(feature.properties.percentage.toFixed(6)) + "%"
-            + '<br>ID: ' + feature.properties.id);
+            + '<br>ID: ' + feature.properties.id
+            + '<br><a href="#" class="popupSearchMissionId">Search this Mission</a>'
+            + '<br><a href="#" class="popupSearchPolygonId">Search this ID</a>');
         }
     }).addTo(map);
 }
@@ -276,3 +287,15 @@ function sleep(ms) {
 
 initMap();
 
+map.on('popupopen', function(feature){
+    var missionid = feature.popup._source.feature.properties.missionid;
+    var id = feature.popup._source.feature.properties.id;
+    $('.popupSearchMissionId').click(function(){
+        document.getElementById("searchbar").value = missionid;
+        getMissionById(document.getElementById('searchbar').value);
+    });
+    $('.popupSearchPolygonId').click(function(){
+        document.getElementById("searchbar").value = id;
+        getMissionById(document.getElementById('searchbar').value);
+    });
+});
