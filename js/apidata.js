@@ -89,6 +89,13 @@ function getProducts() {
     }
 }
 function getMissionById(id){
+    markerGroup.eachLayer(function(layer){
+            map.removeLayer(layer); 
+    });
+    //resets the poly ID search table 
+    var mytbl = document.getElementById("polyIDtable");
+    mytbl.getElementsByTagName("tbody")[0].innerHTML = mytbl.rows[0].innerHTML;    
+
     //activeSearch set to true, to show search is in progress
     activeSearch = true; 
     //remove all map layers but add back counties 
@@ -133,35 +140,24 @@ function getMissionById(id){
         //adds each element in searchQ to the IDsearch table
         var tabBody = document.getElementsByTagName("tbody").item(0);
         console.log(searchQ); 
- 
+      
         for(var x = 0; x < searchQ.length; x++){
             var row = document.createElement("tr");
             var cell1 = document.createElement("td");
             var cell2 = document.createElement("td"); 
             var textnode = document.createTextNode(searchQ[x]);
-            
             //IDsearch button setup
             var buttonnode = document.createElement("button");
             buttonnode.innerHTML = "View";
+            //IDsearch button identifiers: class 'idQsearch', id 'idQsearch' + numberOfButton   
             buttonnode.className = "idQsearch";  
-    
-
-      
             buttonnode.id = 'idQsearch' + x; 
-      
-      
-
-            
-
             cell1.appendChild(textnode);
             cell2.appendChild(buttonnode); 
             row.appendChild(cell1);
             row.appendChild(cell2);
             tabBody.appendChild(row); 
         }
-    
-       
-
         //displays the IDsearch table once all the id's have been loaded in
         document.getElementById("polyIDtable").hidden = false; 
     }else{
@@ -269,62 +265,61 @@ var sidebar = document.getElementById("sidebar");
 
 
 
-
-//reloads all polygons onto map when the searchbar is clicked
+//mouse click event listener 
 document.addEventListener('click', function(event){
+    //checks if search is being cancelled by clicking inside the search bar
     var isClickInside = specElement.contains(event.target);    
     if(isClickInside && activeSearch){
-        specElement.value = '';
-
-        markerGroup.eachLayer(function(layer){
-            map.removeLayer(layer); 
-        });
-
-        for(var x = 0; x < layerData.length; x++){
-            map.removeLayer(layerData[x]);
-        }
-        activeSearch = false; 
-        imageData = [];
-        document.getElementById("results").textContent = "0 Result found";
-        document.getElementById("polyIDtable").hidden = true; 
-
+        resetData();
+        //reload products 
         getProducts(); 
     }
-
+    //if the event clicked is a idQsearch button 
     if(event.toElement.className == 'idQsearch'){
-        //idsearchQ logic
+        //finds the correct button and corresponding polygon ID
+        console.log(event);
         for(var x = 0; x < searchQ.length; x++){
-            
+            //if found set marker on polygon
             if(event.toElement.id == 'idQsearch' + x){
-                
-                var mapLocation;
+                var mapLocation = '';
                 console.log(searchQ[x]);
                 getGeoJson(searchQ[x], function(geoJSONdata){
                     console.log(geoJSONdata);
-                    addToMap(geoJSONdata);
                     mapLocation = geoJSONdata.properties.centre.split(",");
                     markerGroup.eachLayer(function(layer){
                     map.removeLayer(layer); 
-
-                    //add marker and pan map over to the polygon 
                     marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
                     marker.addTo(markerGroup);
                     marker.addTo(map);
-                    map.flyTo({lat: mapLocation[0], lng: mapLocation[1]});
-            }); 
+                }); 
 
-                });
-                
-        
-        
-        sleep(700).then(() => {
-        map.zoomIn(4);
-        }) 
+            });
             };
         }
     };
 
 })
+
+function resetData(){
+    //reset map view, clear markers and clear searchQ
+        map.setView([54.3138, -2.169], 6);
+        specElement.value = '';
+        searchQ = []; 
+        markerGroup.eachLayer(function(layer){
+            map.removeLayer(layer); 
+        });
+        for(var x = 0; x < layerData.length; x++){
+            map.removeLayer(layerData[x]);
+        }
+        //reset imageData and change result's found to 0 
+        activeSearch = false; 
+        imageData = [];
+        document.getElementById("results").textContent = "0 Result found";
+        document.getElementById("polyIDtable").hidden = true; 
+};
+
+
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
