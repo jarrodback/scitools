@@ -29,18 +29,27 @@ function toggleSidebar(){
         setTimeout(function(){ map.invalidateSize()}, 400);
     }
 }
+
 var acc = document.getElementsByClassName("accordion");
 var i;
 for(i = 0; i< acc.length;i++){
     acc[i].addEventListener("click", function(){
-        this.classList.toggle("active");
         var panel = this.nextElementSibling;
-
+        this.classList.toggle("active");
         if(panel.style.maxHeight){
             panel.style.maxHeight = null;
         }
         else{
             panel.style.maxHeight = panel.scrollHeight +"px";
         }
+    });
+}
+
+var acc = document.getElementsByClassName("missionSearch");
+var i;
+for(i = 0; i< acc.length;i++){
+    acc[i].addEventListener("search", function(){
+        var panel = document.getElementsByClassName('panel')[0];
+        panel.style.maxHeight = panel.scrollHeight +"px";
     });
 }

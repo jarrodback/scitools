@@ -41,7 +41,6 @@
         </div>
       <h1>SCI:Toolset Coverage of Data</h1>
       <div id = "searchBar">
-       
         <h2>Search for a Mission</h2>
         <input  id = "searchbar" onkeypress="mySearchFunction(event)" type="search" class="missionSearch" placeholder="Enter MissionID..."/>
         <script>
@@ -51,31 +50,25 @@
               if(key == 13) getMissionById(document.getElementById('searchbar').value);
           }
         </script>
-    
       </div>
       <div id="searchResults"><h2 class="accordion">Search Results:</h2>
         <div class="panel">
           <h2 class="accordion" id="results"> 0 Result Found </h2> 
-          
           <table border='2' id="polyIDtable" hidden="true">
           <tbody>
           <tr><td>Polygon ID's</td></tr>
           </tbody>
           </table>
-
-
-
- 
         </div>
       </div>
       <div id="histogram"><h2 class="accordion">Histogram</h2>
-        <div class="panel"><p>test</p></p></div>
+        <div class="panel"><p>test</p></p>
         <div id="histogramDisplay"></div>
         <button onclick="dataSort()">Sort Data</button>
         <button onclick="saveToCSV()">Save to File</button>
         <button onclick="getHistogram()"> Display Graph</button>
       </div>
-       
+      </div>
     </div>
     <div id="map"></div>
     <script src="js/leaflet.ajax.min.js"></script>
