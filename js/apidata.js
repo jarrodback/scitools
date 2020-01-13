@@ -396,4 +396,20 @@ map.on('popupopen', function(feature){
         document.getElementById("searchbar").value = id;
         getMissionType(document.getElementById('searchbar').value);
     });
+    var acc = document.getElementsByClassName("popupSearchMissionId");
+    var i;
+    for(i = 0; i< acc.length;i++){
+    acc[i].addEventListener("click", function(){
+        var panel = document.getElementsByClassName('panel')[0];
+        panel.style.maxHeight = panel.scrollHeight +"px";
+    });
+    }
+    var acc1 = document.getElementsByClassName("popupSearchPolygonId");
+    var i2;
+    for(i2 = 0; i2< acc.length;i2++){
+    acc1[i2].addEventListener("click", function(){
+        var panel = document.getElementsByClassName('panel')[0];
+        panel.style.maxHeight = panel.scrollHeight +"px";
+    });
+}
 });
