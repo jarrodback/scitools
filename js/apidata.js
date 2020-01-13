@@ -190,7 +190,14 @@ document.addEventListener('click', function (event) {
     }
 })
 function missionsInCounties(missionGeoJSON) {           //Function that calculates the percentage of missions inside of a county divided by the total amount of missions
+    //console.log(countiesData);
 
+
+
+
+
+
+    
     if (arrcreated == false) {          // if the array has been created dont create a new one
         for (var i = 0; i < countiesData.features.length; i++) {            //create a array the size of the amount of countys
             counties.push({ name: countiesData.features[i].properties.name, missionsInside: 0 });       //push starting values to the array
@@ -199,7 +206,7 @@ function missionsInCounties(missionGeoJSON) {           //Function that calculat
     }
 
     for (var i = 0; i < countiesData.features.length; i++) {   //For the amount of counties loop
-        for (var j = 0; j < missionGeoJSON.geometry.coordinates[0].length; j = j + 4) {         //for the amount of coordinates in the mission GEOjson loop
+        for (var j = 0; j < missionGeoJSON.geometry.coordinates[0].length; j = j + 400) {         //for the amount of coordinates in the mission GEOjson loop
             if (d3.geoContains(countiesData.features[i], missionGeoJSON.geometry.coordinates[0][j])) {     // d3 check to see if it is in a county
                 for (var p = 0; p < counties.length - 1; p++) {     //loop for the amount of counties there are minus international waters
                     if (countiesData.features[i].properties.name === counties[p].name) {    //if it is in a county add 1 to the county mission counter
@@ -217,6 +224,7 @@ function missionsInCounties(missionGeoJSON) {           //Function that calculat
             console.log(counties[q].name + " has " + (((counties[q].missionsInside / totalmissions) * 100).toFixed(1)) + "% missions in it")
         }
     }
+
 }
 
 
