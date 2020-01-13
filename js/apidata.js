@@ -15,6 +15,7 @@ var feaytslength = 0;
 var totalmissions = 0;
 var countiesData;
 var ukbordersData;
+var TempJank = [];
 
 fetch('data/ukcounties.geojson')
     .then(Response => Response.text())
@@ -210,10 +211,10 @@ function missionsInCounties(missionGeoJSON) {           //Function that calculat
                 if (countiesData.features[o].geometry.coordinates[p].length > 1) {
 
                     for (var i = 0; i < countiesData.features[o].geometry.coordinates[p].length; i++) {
-
-                            var currentSegement = turf.polygon(countiesData.features[o].geometry.coordinates[p][i]);
+                            TempJank.push(countiesData.features[o].geometry.coordinates[p][i])
+                            var currentSegement = turf.polygon(TempJank);
                             var intersectarea = turf.intersect(currentSegement, missionGeoJSON.geometry);
-
+                            TempJank = [];
                             if (intersectarea != undefined) {
                                 console.log("addedToMap");
                                 addToMap(intersectarea);
