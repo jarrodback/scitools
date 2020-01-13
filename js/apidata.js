@@ -92,8 +92,9 @@ function getMissionById(id){
     markerGroup.eachLayer(function(layer){
             map.removeLayer(layer); 
     });
-    //need to reset table
-    
+    //resets the poly ID search table 
+    var mytbl = document.getElementById("polyIDtable");
+    mytbl.getElementsByTagName("tbody")[0].innerHTML = mytbl.rows[0].innerHTML;    
 
     //activeSearch set to true, to show search is in progress
     activeSearch = true; 
