@@ -193,6 +193,7 @@ function getHistogram(){
 ///////////////////SEARCH BAR///////////////////
 function getMissionById(id){
     var qArea = []; 
+    var currentMission;
         for(var x = 0; x < searchQ.length; x++){
             getProductFromImageData(searchQ[x], function(geoJSONdata){
                 addToMap(geoJSONdata);
@@ -200,10 +201,13 @@ function getMissionById(id){
                 marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
                 marker.addTo(markerGroup); 
                 marker.addTo(map);
-
+                currentMission = geoJSONdata; 
                 //push current ploygon area to qArea array
                 qArea.push(geoJSONdata.properties.area); 
                 currentMissionID = geoJSONdata.properties.missionid; 
+
+                console.log(geoJSONdata); 
+        
             });
         }
     
@@ -230,7 +234,8 @@ function getMissionById(id){
         //updating meta data
         document.getElementById('metaMissionID').textContent = 'Current Mission ID: ' + currentMissionID;
         document.getElementById('metaTotalArea').textContent = 'Total Mission Area: ' + areaTotal + "km²";
-        document.getElementById('metaAreaCovered').textContent = 'Mission UK Coverage: ' + parseFloat((areaOfUk / areaTotal)*100).toFixed(2) + '%'; 
+        document.getElementById('metaAreaCovered').textContent = 'Mission UK Coverage: ' + parseFloat(areaOfUk / areaTotal).toFixed(2) + '%'; 
+        document.getElementById('metaDateCreated').textContent = 'Date Created: ' + currentMission.properties.datecreated;
 
     
     
@@ -267,11 +272,13 @@ function getMissionById(id){
 function searchPolygonID(id){
     //hides IDsearch table since only polygon ID is being loaded 
         document.getElementById("polyIDtable").hidden = true;
+        document.getElementById("results").innerHTML = "&#8618; " + "1 Results found";
         getProductFromImageData(id, function(geoJSONdata){
             addToMap(geoJSONdata);
             var mapLocation = geoJSONdata.properties.centre.split(",");
             markerGroup.eachLayer(function(layer){
             map.removeLayer(layer); 
+            console.log(geoJSONdata) 
         });
         //add marker and pan map over to the polygon 
         marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
@@ -300,7 +307,8 @@ function getMissionType(id){
     addCountiesToMap();
     //searchQ array for missionID results 
     searchQ = [];
-    //bool for is a missionID is found 
+    //bool for is a missionID is found or ID
+    var polyIDfound = false; 
     missionIDfound = false;
     //searching for missionID, if found each poly id present in that mission will be pushed to searchQ
     for(var x = 0; x < imageData.length; x++){
@@ -309,8 +317,17 @@ function getMissionType(id){
             searchQ.push(imageData[x].properties.id); 
         }
     } 
+    //searching for 
+    getProductFromImageData(id, function(geo){
+        polyIDfound = true; 
+    });
+
+
     if(missionIDfound) getMissionById(searchQ);
-    else searchPolygonID(id); 
+    if(polyIDfound) searchPolygonID(id); 
+    else{
+        alert("No ID found!")
+    }
 };
 
 
