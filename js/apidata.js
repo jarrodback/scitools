@@ -174,14 +174,24 @@ hidden.download = 'areadata.csv';
 hidden.click();  
 }
 function getHistogram(){
-// using plot.ly
-
-var trace = {
-x: areaData,
-type: 'histogram',
-};
-var data = [trace];
-Plotly.newPlot('histogramDisplay', data);
+    // using plot.ly
+    var trace = {
+        x: areaData,
+        type: 'histogram',
+        marker: {
+            color: '#0D3B66'
+        }
+    };
+    Plotly.newPlot('histogramDisplay', [trace], {
+        plot_bgcolor: '#F95738',
+        paper_bgcolor: '#F95738',
+      })
+      .then(() => {
+        return Plotly.toImage(gd, {setBackground: setBackground})
+      })
+      .then(src => {
+        im.src = src
+      });
 }
 ///////////////////SEARCH BAR///////////////////
 function getMissionById(id){
