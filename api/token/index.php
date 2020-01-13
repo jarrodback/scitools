@@ -1,4 +1,7 @@
 <?php 
+
+global $authToken;
+
 function getToken(){
 
       $url = "https://hallam.sci-toolset.com/api/v1/token";
@@ -17,9 +20,7 @@ function getToken(){
       $response = curl_exec($curl);
       curl_close($curl);
       $auth = json_decode($response);
-      echo $auth->access_token;
-
-
+      $GLOBALS['authToken'] = $auth->access_token;
 }
 getToken();
 ?>

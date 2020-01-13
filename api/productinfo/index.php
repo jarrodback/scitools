@@ -1,14 +1,13 @@
 <?php  
+  include('../token/index.php');
 function getProductJSON(){
       $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
       if($contentType === "plain/text")
       {
         $content = trim(file_get_contents("php://input"));
-        $array = explode(" ", $content);
-        $id = $array[0];
-        $authToken = $array[1];
+        $authToken = $GLOBALS['authToken'];
         $authorization = "Authorization: Bearer " . $authToken;
-        $url = "https://hallam.sci-toolset.com/discover/api/v1/products/" . $id;
+        $url = "https://hallam.sci-toolset.com/discover/api/v1/products/" . $content;
         $curl = curl_init($url);      
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -30,7 +29,7 @@ function getProductJSON(){
             "documentType" =>  $data->product->result->documentType,
             "area" => "NaN",
             "percentage" => "NaN",
-            "id" =>  $id,
+            "id" =>  $content,
             "centre" =>  $data->product->result->centre,
             "datemodified" => $datemodified,
             "datecreated" => $datecreated

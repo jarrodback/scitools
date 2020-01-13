@@ -6,6 +6,7 @@ let map;
 var markerGroup = L.layerGroup(); 
 var activeSearch = false; 
 var searchQ = [];
+var loadingPolygons = true;
 
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 function initMap(){
@@ -23,8 +24,9 @@ function initMap(){
         imageData[x].properties.percentage = (imageData[x].properties.area / areaOfUk) * 100;
         addToMap(imageData[x]);
     }
+    loadingPolygons = false;
     console.log("All missions have been added to map");
-}, 10000);
+}, 20000);
 }
 function addCountiesToMap(){
     var myStyle = {
@@ -78,31 +80,31 @@ function getTokenPHP(){
     });
 }
 function getProductSearchPHP(){
-    return getTokenPHP().then(function (result){
-       // result is api key
+    // return getTokenPHP().then(function (result){
+    //    // result is api key
         return fetch('api/productsearch/', {
             method: 'POST',
             mode: "same-origin",
             credentials: "same-origin",
             headers : new Headers({
                 'Content-Type' : 'plain/text'
-            }),
-            body: result
+            })
+           // body: result
         })
         .then(function(response){
             return response.text();
                 //text is array of ids
         });
-    });
+    //});
 }
 function getProductGeoJSONPHP(){
-     getTokenPHP().then(function(result){
-        //result is api key
+    //  getTokenPHP().then(function(result){
+    //     //result is api key
          getProductSearchPHP().then(function(idarray){
             //idarray is array of ids
             var json = JSON.parse(idarray);
             for(var x=0; x < json.length; x++){
-                var body = json[x].id + " " + result;
+                var body = json[x].id;
                  fetch('api/productinfo/', {
                     method: 'POST',
                     mode: "same-origin",
@@ -119,11 +121,11 @@ function getProductGeoJSONPHP(){
                 })
             }
         });
-    });
+    //});
 }
 function getProductByIDPHP(id, callback){
-    getTokenPHP().then(function(result){
-        var body = id + " " + result;
+    // getTokenPHP().then(function(result){
+    //     var body = id + " " + result;
         fetch('api/productinfo/', {
         method: 'POST',
         mode: "same-origin",
@@ -131,7 +133,7 @@ function getProductByIDPHP(id, callback){
         headers : new Headers({
             'Content-Type' : 'plain/text'
         }),
-        body: body
+        body: id
     })
     .then(function(response){
         response.json().then(function(json){
@@ -139,7 +141,7 @@ function getProductByIDPHP(id, callback){
             callback(json);
         });
     })
-    });
+    //});
 }
 function getProductFromImageData(id, callback){
     for(var x=0; x<imageData.length; x++){
@@ -312,22 +314,6 @@ function getMissionType(id){
     if(missionIDfound) getMissionById(searchQ);
     else searchPolygonID(id); 
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function resetData(){
     //reset map view, clear markers and clear searchQ

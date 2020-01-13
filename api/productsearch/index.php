@@ -1,13 +1,15 @@
 <?php   
+include('../token/index.php');
 function getProducts(){
       $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
       if($contentType === "plain/text")
       {
-        $content = trim(file_get_contents("php://input"));
+        //$content = trim(file_get_contents("php://input"));
         $url = "https://hallam.sci-toolset.com/discover/api/v1/products/search";
         $data = "{\"size\":100, \"keywords\":\"\"}";
         $curl = curl_init($url);
-        $authorization = "Authorization: Bearer " . $content;
+        $authToken = $GLOBALS['authToken'];
+        $authorization = "Authorization: Bearer " . $authToken;
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl, CURLOPT_POST, true);
