@@ -3,8 +3,6 @@ var areaData = [];
 var imageData = [];
 var layerData =[];
 let map;
-var authenication;
-let authToken;
 var markerGroup = L.layerGroup(); 
 var activeSearch = false; 
 var searchQ = [];
@@ -26,7 +24,7 @@ function initMap(){
         addToMap(imageData[x]);
     }
     console.log("All missions have been added to map");
-}, 7000);
+}, 10000);
 }
 function addCountiesToMap(){
     var myStyle = {
@@ -186,7 +184,6 @@ var data = [trace];
 Plotly.newPlot('histogramDisplay', data);
 }
 ///////////////////SEARCH BAR///////////////////
-
 function getMissionById(id){
     markerGroup.eachLayer(function(layer){
         map.removeLayer(layer);

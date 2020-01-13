@@ -1,5 +1,4 @@
 <?php  
-
 function getProductJSON(){
       $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
       if($contentType === "plain/text")
