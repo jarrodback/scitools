@@ -134,8 +134,8 @@ function getMissionById(id){
         map.setView([54.3138, -2.169], 6);
 
         //displays the amount of id's present in searchQ to the user 
-        if(searchQ.length > 1) document.getElementById("results").textContent = searchQ.length + " Results found";
-        else document.getElementById("results").textContent = searchQ.length + " Result found";
+        if(searchQ.length > 1) document.getElementById("results").innerHTML = "&#8618; " + searchQ.length + " Results found";
+        else document.getElementById("results").innerHTML = "&#8618; " + searchQ.length + " Result found";
         
         //adds each element in searchQ to the IDsearch table
         var tabBody = document.getElementsByTagName("tbody").item(0);
@@ -252,13 +252,23 @@ function saveToCSV(){
 }
 function getHistogram(){
     // using plot.ly
-
     var trace = {
         x: areaData,
         type: 'histogram',
+        marker: {
+            color: '#0D3B66'
+        }
     };
-    var data = [trace];
-    Plotly.newPlot('histogramDisplay', data);
+    Plotly.newPlot('histogramDisplay', [trace], {
+        plot_bgcolor: '#F95738',
+        paper_bgcolor: '#F95738',
+      })
+      .then(() => {
+        return Plotly.toImage(gd, {setBackground: setBackground})
+      })
+      .then(src => {
+        im.src = src
+      })
 }
 var specElement = document.getElementById("searchbar");
 var sidebar = document.getElementById("sidebar");
@@ -314,7 +324,7 @@ function resetData(){
         //reset imageData and change result's found to 0 
         activeSearch = false; 
         imageData = [];
-        document.getElementById("results").textContent = "0 Result found";
+        document.getElementById("results").innerHTML = "&#8618; 0 Result found";
         document.getElementById("polyIDtable").hidden = true; 
 };
 
