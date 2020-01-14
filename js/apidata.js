@@ -27,10 +27,29 @@ function initMap(){
     console.log("All missions have been added to map");
 }, 20000);
 }
+function getAreaColour(feature){
+    if(feature.properties.area < 100){
+        return {fillColor: '#FED976', color: '#FED976'};
+    }
+    else if( feature.properties.area < 200){
+        return {fillColor: '#FEB24C', color: '#FEB24C'};
+
+    }
+    else if (feature.properties.area < 300){
+        return {fillColor: '#FC4E2A', color: '#FC4E2A'};
+
+    }
+    else if (feature.properties.area < 400){
+        return {fillColor: '#BD0026', color: '#BD0026'};
+    }
+    else{
+        return {fillColor: '#800026', color: '#800026'};
+    }
+}
 function addCountiesToMap(){
     var myStyle = {
         "stroke": true,
-        "color": "#ff0000",
+        "color": "blue",
         "weight": 1,
         "fill": true,
         "fillOpacity": 0,
@@ -46,7 +65,9 @@ function addCountiesToMap(){
     console.log("Regional data has been added to the map");
 }
 function addToMap(data){
-    L.geoJSON(data, {
+    var mystyle = getAreaColour(data);
+    L.geoJSON(data, 
+        {style:mystyle, 
         onEachFeature: function(feature, layer){ 
             layerData.push(layer);
             layer.bindPopup("Mission ID: " + feature.properties.missionid
@@ -464,3 +485,12 @@ map.on('popupopen', function(feature){
 }
 });
 
+// var legend = L.control({position:'topleft'});
+// legend.onAdd = function(map){
+//     var div = L.DOmUtil.create('div', 'info legend'),
+//     grades = [100,200,300,400,500];
+//     labels = ['test'];
+//     for(var x = 0; x < grades.length; x++){
+//         div.innerHTML += '<i style="background:' + getAreaColour();
+//     }
+// }
