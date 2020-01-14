@@ -172,27 +172,16 @@ function getProductFromImageData(id, callback){
 }
 ///////////////////HISTOGRAM///////////////////
 function dataSort(){
+    for (var x = 0; x < imageData.length; x++) {
+        areaData.push(imageData[x].properties.area);
+    }
     //sorting the areas in ascending order
     areaData.sort(function(a,b){return a-b});
-    window.alert("Data Sorted");
+    window.alert("Data Sorted "+ x + " records processed");
     console.log("Sorted!");
 }
-function saveToCSV(){
-console.log("Downloading");
-var csv = 'AREA\n';
-areaData.forEach(function(row){
-console.log(row);
-csv += row;
-csv += "\n";
-});
-console.log(csv);
-var hidden = document.createElement('a');
-hidden.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-hidden.target = '_blank';
-hidden.download = 'areadata.csv';
-hidden.click();  
-}
-function getHistogram(){
+
+function getHistogram() {
     // using plot.ly
     var trace = {
         x: areaData,
