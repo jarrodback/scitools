@@ -20,32 +20,6 @@ var ukbordersData;
 var TempJank = [];
 var regionsData;
 var arrcreated = false;
-
-fetch('data/ukBorders.geojson')
-    .then(Response => Response.text())
-    .then((data) => {
-        countiesData = JSON.parse(data);
-        ukbordersData = JSON.parse(data);
-        for (var i = 0; i < countiesData.features.length; i++) {
-            countiesData.features[i].geometry = turf.simplify(turf.cleanCoords(countiesData.features[i].geometry), { tolerance: 0.0001 });
-        }
-        for (var i = 0; i < countiesData.features[0].geometry.coordinates.length; i++) {
-            areaOfUk = areaOfUk + (turf.area(turf.polygon(countiesData.features[0].geometry.coordinates[i])) / 1000000);
-        }
-
-    }
-    )
-
-fetch('data/ukcounties.geojson').then(Response => Response.text()).then((data) => {
-    regionsData = JSON.parse(data)
-    for (var i = 0; i < regionsData.features.length; i++) {
-        regionsData.features[i].geometry = turf.simplify(turf.cleanCoords(regionsData.features[i].geometry), { tolerance: 0.0001 });
-    }
-})
-
-
-
-
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 function initMap() {
     map = L.map('map').setView([54.3138, -2.169], 6);
@@ -64,7 +38,7 @@ function initMap() {
         document.getElementById('loadingScreen').style.display = "none";
         console.log("All missions have been added to map");
         missionsLoaded = true;
-        missionsInCounties();
+        // missionsInCounties();
     }, 17000);
 }
 
@@ -541,6 +515,27 @@ function missionsInCounties() {           //Function that calculates the percent
     }
 }
 
+// fetch('data/ukBorders.geojson')
+//     .then(Response => Response.text())
+//     .then((data) => {
+//         countiesData = JSON.parse(data);
+//         ukbordersData = JSON.parse(data);
+//         for (var i = 0; i < countiesData.features.length; i++) {
+//             countiesData.features[i].geometry = turf.simplify(turf.cleanCoords(countiesData.features[i].geometry), { tolerance: 0.0001 });
+//         }
+//         for (var i = 0; i < countiesData.features[0].geometry.coordinates.length; i++) {
+//             areaOfUk = areaOfUk + (turf.area(turf.polygon(countiesData.features[0].geometry.coordinates[i])) / 1000000);
+//         }
+
+//     }
+//     )
+
+// fetch('data/ukcounties.geojson').then(Response => Response.text()).then((data) => {
+//     regionsData = JSON.parse(data)
+//     for (var i = 0; i < regionsData.features.length; i++) {
+//         regionsData.features[i].geometry = turf.simplify(turf.cleanCoords(regionsData.features[i].geometry), { tolerance: 0.0001 });
+//     }
+// })
 
 
 
