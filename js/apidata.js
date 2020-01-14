@@ -191,8 +191,9 @@ function dataSort(){
     }
     //sorting the areas in ascending order
     areaData.sort(function(a,b){return a-b});
-    window.alert("Data Sorted "+ x + " records processed");
+    console.log("Data Sorted "+ x + " records processed");
     console.log("Sorted!");
+    getHistogram();
 }
 
 function getHistogram() {
