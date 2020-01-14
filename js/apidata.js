@@ -365,16 +365,24 @@ function resetData(){
         }
         //reset imageData and change result's found to 0 
         activeSearch = false; 
-        document.getElementById("results").textContent = "0 Result found";
+        document.getElementById("results").innerHTML = "&#8618; " + "0 Result found";
         document.getElementById("polyIDtable").hidden = true; 
 
-        //updating meta data
+        //clear meta data
         document.getElementById('metadata').hidden = true; 
         var metaText = document.getElementsByClassName('metaTag');
         metaText[0].textContent = null; 
         metaText[1].textContent = null; 
         metaText[2].textContent = null; 
-        metaText[3].textContent = null; 
+        metaText[3].textContent = null;
+        
+        //clear poly data
+        document.getElementById('polyMetadata').hidden = true; 
+        var polyMeta = document.getElementsByClassName('polymetaTag');
+        polyMeta[0].textContent = null;
+        polyMeta[1].textContent = null;
+        polyMeta[2].textContent = null;
+        polyMeta[3].textContent = null;
 
         console.log(document.getElementsByClassName('metaTag'));
 };
@@ -401,6 +409,14 @@ document.addEventListener('click', function(event){
                     mapLocation = geoJSONdata.properties.centre.split(",");
                     markerGroup.eachLayer(function(layer){
                         map.removeLayer(layer); 
+
+                    //ADD META DATA FOR EACH POLYGON 
+                    document.getElementById('polyMetadata').hidden = false; 
+                    var polyMeta = document.getElementsByClassName('polymetaTag');
+                    polyMeta[0].textContent = 'Selected Polygon ID: ' + geoJSONdata.properties.id; 
+                    polyMeta[1].textContent = 'Polygon UK Coverage: ' + (areaofUk / geoJSONdata.properties.area);  
+                    polyMeta[2].textContent = 'Polygon Area: ' + geoJSONdata.properties.area; 
+                    polyMeta[3].textContent = 'Date Created: ' + geoJSONdata.properties.datecreated; 
                        
                   }); 
                   marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
