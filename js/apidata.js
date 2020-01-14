@@ -27,6 +27,7 @@ function initMap(){
     document.getElementById('loadingScreen').style.display = "none";
     console.log("All missions have been added to map");
     missionsLoaded = true; 
+    miss
 }, 15000);
 }
 
@@ -470,18 +471,18 @@ function missionsInCounties() {           //Function that calculates the percent
     for (var i = 0; i < missionsInUk.length; i++) {
         var intersects = false;
         var intersectsAt = 0;
-        // for (var j = 0; j < missionsInUk.length; i++) {
-        //     if (j = i) {
-        //         j++;
-        //     }
-        //     if (finalmissions != undefined) {
-        //         intersects = true
-        //         intersectsAt = j;
-        //         missionsInUk[i] = turf.intersect(missionsInUk[i].coords, missionsInUk[j].coords);
-        //         missionsInUk.slice[j];
-        //     }
+         for (var j = 0; j < missionsInUk.length; i++) {
+             if (j = i) {
+                 j++;
+             }
+             if (finalmissions != undefined) {
+                 intersects = true
+                 intersectsAt = j;
+                 missionsInUk[i] = turf.intersect(missionsInUk[i].coords, missionsInUk[j].coords);
+                 missionsInUk.slice[j];
+            }
 
-        // }
+         }
         addToMap(missionsInUk[i].coords);
     }
 }
