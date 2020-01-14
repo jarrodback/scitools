@@ -215,20 +215,22 @@ input[type=search]:focus {
 }
 
 #loadingScreen{
-  width: 3%;
-  height: 6%;
   background-color: transparent;
-  top:0;
+  top:50%;
 	bottom: 0;
 	left: 0;
 	right: 0;	
 	margin: auto;
   position: absolute;
+  display: block;
   z-index: 4;
-  display:block;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 #loadingScreen img{
   width: auto;
   height: auto;
+  margin: auto;
 }
