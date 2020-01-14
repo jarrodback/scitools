@@ -137,6 +137,10 @@ transition: all 1s;
   padding: 4px;
 }
 
+#histogram button{
+  left: 0;
+}
+
 #histogram h2, #searchResults h2{
   width: 100%;
   margin: 0px;
@@ -172,8 +176,8 @@ input[type=search]:focus {
 }
 
 #polyIDtable td{
-  border-bottom: 2px solid white;
   padding: 4px;
+  border-bottom: 2px solid white;
 }
 
 #polyIDtable tr:first-child td {
@@ -267,4 +271,21 @@ input[type=search]:focus {
 .legend i.icon {
   background-size: 18px;
   background-color: rgba(255, 255, 255, 1);
+}
+
+
+button{
+  padding: 10px 20px 10px 20px;
+  color: #000;
+  font-weight: bold;
+  position: relative;
+  display: inline-block;
+  background-color: #CCC;
+  border-bottom: none;
+  text-align: center;
+}
+
+button:hover{
+  cursor: pointer;
+  background-color: #FFAAAA;
 }
