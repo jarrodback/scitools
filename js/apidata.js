@@ -423,8 +423,11 @@ document.addEventListener('click', function(event){
                     marker.addTo(markerGroup);
                     marker.addTo(map);
                 });
+                var panel = document.getElementsByClassName('panel')[0];
+            panel.style.maxHeight = panel.scrollHeight +"px";
             };
         }
+      
     };
 });
 
@@ -467,7 +470,7 @@ var legend = L.control({position: 'topright'});
 legend.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'info legend'),
     grades = ['#FED976','#FEB24C','#FC4E2A','#BD0026','#800026'];
-    div.innerHTML += "<h4>Mission Coverage (km²)</h4>";
+    div.innerHTML += "<h4>Land Coverage (km²)</h4>";
     div.innerHTML += '<i style="background: #FED976"></i><span><100</span><br>';
     div.innerHTML += '<i style="background: #FEB24C"></i><span>100-199</span><br>';
     div.innerHTML += '<i style="background: #FC4E2A"></i><span>200-299</span><br>';
