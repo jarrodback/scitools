@@ -15,7 +15,6 @@ function initMap(){
     minZoom: 6
   }).addTo(map);
   addCountiesToMap();
-
   getProductGeoJSONPHP();
   setTimeout(function(){ 
     for(var x = 0; x < imageData.length; x++){
@@ -27,6 +26,7 @@ function initMap(){
     console.log("All missions have been added to map");
 }, 20000);
 }
+
 function getAreaColour(feature){
     if(feature.properties.area < 100){
         return {fillColor: '#FED976', color: '#FED976'};
@@ -40,6 +40,9 @@ function getAreaColour(feature){
 
     }
     else if (feature.properties.area < 400){
+        return {fillColor: '#E31A1C', color: '#E31A1C'};
+    }
+    else if (feature.properties.area < 500){
         return {fillColor: '#BD0026', color: '#BD0026'};
     }
     else{
@@ -460,12 +463,17 @@ map.on('popupopen', function(feature){
 }
 });
 
-// var legend = L.control({position:'topleft'});
-// legend.onAdd = function(map){
-//     var div = L.DOmUtil.create('div', 'info legend'),
-//     grades = [100,200,300,400,500];
-//     labels = ['test'];
-//     for(var x = 0; x < grades.length; x++){
-//         div.innerHTML += '<i style="background:' + getAreaColour();
-//     }
-// }
+var legend = L.control({position: 'topright'});
+legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'info legend'),
+    grades = ['#FED976','#FEB24C','#FC4E2A','#BD0026','#800026'];
+    div.innerHTML += "<h4>Mission Coverage (km²)</h4>";
+    div.innerHTML += '<i style="background: #FED976"></i><span><100</span><br>';
+    div.innerHTML += '<i style="background: #FEB24C"></i><span>100-199</span><br>';
+    div.innerHTML += '<i style="background: #FC4E2A"></i><span>200-299</span><br>';
+    div.innerHTML += '<i style="background: #E31A1C"></i><span>300-399</span><br>';
+    div.innerHTML += '<i style="background: #BD0026"></i><span>400-499</span><br>';
+    div.innerHTML += '<i style="background: #800026"></i><span>500+</span><br>';
+    return div;
+};
+legend.addTo(map);
