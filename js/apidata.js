@@ -6,7 +6,6 @@ let map;
 var markerGroup = L.layerGroup(); 
 var activeSearch = false; 
 var searchQ = [];
-var loadingPolygons = true;
 
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 function initMap(){
@@ -24,7 +23,7 @@ function initMap(){
         imageData[x].properties.percentage = (imageData[x].properties.area / areaOfUk) * 100;
         addToMap(imageData[x]);
     }
-    loadingPolygons = false;
+    document.getElementById('loadingScreen').style.display = "none";
     console.log("All missions have been added to map");
 }, 20000);
 }
@@ -119,6 +118,9 @@ function getProductGeoJSONPHP(){
                         imageData.push(json);
                     });
                 })
+                .then(function(response){
+                    document.querySelector('.loadingScreen p').innerHTML = ("Loading " + imageData.length + "/61");
+                });
             }
         });
     //});
@@ -417,3 +419,4 @@ map.on('popupopen', function(feature){
     });
 }
 });
+

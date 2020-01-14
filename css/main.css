@@ -41,7 +41,7 @@ transition: all 1s;
   flex-basis: 80%;
   width: 100%;
   z-index: 0;
-  position: relative;
+  position: absolute;
 }
 
 #sidebar{
@@ -225,9 +225,10 @@ input[type=search]:focus {
 	margin: auto;
   position: absolute;
   z-index: 4;
+  display:block;
 }
 
 #loadingScreen img{
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
 }
