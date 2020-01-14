@@ -50,17 +50,25 @@
         <input  id = "searchbar" onkeypress="mySearchFunction(event)" type="search" class="missionSearch" placeholder="Enter MissionID..."/>
         <script>
           function mySearchFunction(e){
-              var key = event.keyCode;
-              console.log(document.getElementById('searchbar').value);
-              if(key == 13) getMissionType(document.getElementById('searchbar').value);
+            
+            var key = event.keyCode;
+              
+              if(key == 13){
+                assert(missionsLoaded, 'Please wait until data has been loaded before searching'); 
+                getMissionType(document.getElementById('searchbar').value);
+              } 
           }
+
+        function assert(condition, message) {
+        if (!condition) {
+          alert(message);
+          throw 'search before load' || "Assertion failed";
+        }
+        } 
         </script>
       </div>
       <div id="searchResults"><h2 class="accordion">Search Results:</h2>
-     
-          
-          
- 
+
         <div class="panel" id="metaPanel">
           <h2 class="accordion" hidden="true" id="metadata">&#8618; Meta Data: </h2>
           <p id="metaMissionID" class="metaTag" visible="false"></p>
