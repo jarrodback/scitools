@@ -6,6 +6,7 @@ let map;
 var markerGroup = L.layerGroup(); 
 var activeSearch = false; 
 var searchQ = [];
+var missionsLoaded = false; 
 
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 function initMap(){
@@ -24,6 +25,7 @@ function initMap(){
     }
     document.getElementById('loadingScreen').style.display = "none";
     console.log("All missions have been added to map");
+    missionsLoaded = true; 
 }, 20000);
 }
 
@@ -329,30 +331,33 @@ function searchPolygonID(id){
 };
 
 function getMissionType(id){
-    markerGroup.eachLayer(function(layer){
-        map.removeLayer(layer);
-    });
-    //reset the table 
-    var mytbl = document.getElementById("polyIDtable");
-    mytbl.getElementsByTagName("tbody")[0].innerHTML = mytbl.rows[0].innerHTML;
-    //activeSearch set to true, to show search is in progress
-    activeSearch = true; 
-    //searchQ array for missionID results 
-    searchQ = [];
-    //bool for is a missionID is found or ID
-    var polyIDfound = false; 
-    missionIDfound = false;
-    //searching for missionID, if found each poly id present in that mission will be pushed to searchQ
-    for(var x = 0; x < imageData.length; x++){
-        if(id == imageData[x].properties.missionid){
-            missionIDfound = true; 
-            searchQ.push(imageData[x].properties.id); 
-        }else if(id == imageData[x].properties.id){
-            searchPolygonID(id);
-            break; 
-        }
-    } 
-    if(missionIDfound) getMissionById(searchQ);    
+    //check if the page is loading 
+    console.log(id);
+        markerGroup.eachLayer(function(layer){
+            map.removeLayer(layer);
+        });
+        //reset the table 
+        var mytbl = document.getElementById("polyIDtable");
+        mytbl.getElementsByTagName("tbody")[0].innerHTML = mytbl.rows[0].innerHTML;
+        //activeSearch set to true, to show search is in progress
+        activeSearch = true; 
+        //searchQ array for missionID results 
+        searchQ = [];
+        //bool for is a missionID is found or ID
+        var polyIDfound = false; 
+        missionIDfound = false;
+        //searching for missionID, if found each poly id present in that mission will be pushed to searchQ
+        for(var x = 0; x < imageData.length; x++){
+            if(id == imageData[x].properties.missionid){
+                missionIDfound = true; 
+                searchQ.push(imageData[x].properties.id); 
+            }else if(id == imageData[x].properties.id){
+                searchPolygonID(id);
+                break; 
+            }
+        } 
+    if(missionIDfound) getMissionById(searchQ);  
+
 };
 
 function resetData(){
