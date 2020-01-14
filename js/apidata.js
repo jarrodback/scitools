@@ -61,7 +61,6 @@ function addToMap(data){
 }
 function repopulateMap(){
     for(var x = 0; x < imageData.length; x++){
-        console.log(imageData[x]);
         addToMap(imageData[x]);
     }
 }
@@ -194,8 +193,14 @@ function getHistogram(){
 }
 ///////////////////SEARCH BAR///////////////////
 function getMissionById(id){
+    //remove all map layers but add back counties 
+    for(var x = 0; x < layerData.length; x++){
+        map.removeLayer(layerData[x]);
+    }
+    addCountiesToMap();
     var qArea = []; 
     var currentMission;
+    var currentMissionID; 
         for(var x = 0; x < searchQ.length; x++){
             getProductFromImageData(searchQ[x], function(geoJSONdata){
                 addToMap(geoJSONdata);
@@ -234,6 +239,10 @@ function getMissionById(id){
         else document.getElementById("results").textContent = searchQ.length + " Result found";*/
 
         //updating meta data
+        //document.getElementsByClassName('metaTag').visible = true; 
+        console.log(document.getElementsByClassName('metaTag'));
+
+        document.getElementById('metadata').hidden = false; 
         document.getElementById('metaMissionID').textContent = 'Current Mission ID: ' + currentMissionID;
         document.getElementById('metaTotalArea').textContent = 'Total Mission Area: ' + areaTotal + "km²";
         document.getElementById('metaAreaCovered').textContent = 'Mission UK Coverage: ' + parseFloat(areaOfUk / areaTotal).toFixed(2) + '%'; 
@@ -269,18 +278,25 @@ function getMissionById(id){
     
 }; 
 
-
-
 function searchPolygonID(id){
+    var currPoly;
     //hides IDsearch table since only polygon ID is being loaded 
+    //remove all map layers but add back counties 
+    for(var x = 0; x < layerData.length; x++){
+        map.removeLayer(layerData[x]);
+    }
+    addCountiesToMap();
         document.getElementById("polyIDtable").hidden = true;
         document.getElementById("results").innerHTML = "&#8618; " + "1 Results found";
         getProductFromImageData(id, function(geoJSONdata){
             addToMap(geoJSONdata);
+            currPoly = geoJSONdata; 
             var mapLocation = geoJSONdata.properties.centre.split(",");
             markerGroup.eachLayer(function(layer){
             map.removeLayer(layer); 
             console.log(geoJSONdata) 
+
+           
         });
         //add marker and pan map over to the polygon 
         marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
@@ -292,7 +308,16 @@ function searchPolygonID(id){
         map.zoomIn(4);
         }) 
     });
+     //update meta data
+            document.getElementById('metadata').hidden = false; 
+            var metaText = document.getElementsByClassName('metaTag');
+            metaText[0].textContent = 'Polygon ID: ' + currPoly.properties.id; 
+            metaText[1].textContent = 'Polygon UK Coverage: ' + (areaOfUk / currPoly.properties.area); 
+            metaText[2].textContent = 'Polygon Area: ' + currPoly.properties.area; 
+            metaText[3].textContent = 'Date Created: ' + currPoly.properties.datecreated; 
+    
 };
+
 function getMissionType(id){
     markerGroup.eachLayer(function(layer){
         map.removeLayer(layer);
@@ -302,34 +327,27 @@ function getMissionType(id){
     mytbl.getElementsByTagName("tbody")[0].innerHTML = mytbl.rows[0].innerHTML;
     //activeSearch set to true, to show search is in progress
     activeSearch = true; 
-    //remove all map layers but add back counties 
-    for(var x = 0; x < layerData.length; x++){
-        map.removeLayer(layerData[x]);
-    }
-    addCountiesToMap();
     //searchQ array for missionID results 
     searchQ = [];
     //bool for is a missionID is found or ID
     var polyIDfound = false; 
     missionIDfound = false;
     //searching for missionID, if found each poly id present in that mission will be pushed to searchQ
+
     for(var x = 0; x < imageData.length; x++){
         if(id == imageData[x].properties.missionid){
             missionIDfound = true; 
             searchQ.push(imageData[x].properties.id); 
+        }else if(id == imageData[x].properties.id){
+            polyIDfound = true; 
+            break; 
         }
     } 
-    //searching for 
-    getProductFromImageData(id, function(geo){
-        polyIDfound = true; 
-    });
 
+    if(missionIDfound) getMissionById(searchQ);    
+    else if(polyIDfound) searchPolygonID(id); 
+    
 
-    if(missionIDfound) getMissionById(searchQ);
-    if(polyIDfound) searchPolygonID(id); 
-    else{
-        alert("No ID found!")
-    }
 };
 
 function resetData(){
@@ -347,6 +365,16 @@ function resetData(){
         activeSearch = false; 
         document.getElementById("results").textContent = "0 Result found";
         document.getElementById("polyIDtable").hidden = true; 
+
+        //updating meta data
+        document.getElementById('metadata').hidden = true; 
+        var metaText = document.getElementsByClassName('metaTag');
+        metaText[0].textContent = null; 
+        metaText[1].textContent = null; 
+        metaText[2].textContent = null; 
+        metaText[3].textContent = null; 
+
+        console.log(document.getElementsByClassName('metaTag'));
 };
 
 var specElement = document.getElementById("searchbar");

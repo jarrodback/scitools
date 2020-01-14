@@ -48,7 +48,7 @@
           function mySearchFunction(e){
               var key = event.keyCode;
               console.log(document.getElementById('searchbar').value);
-              if(key == 13) getMissionById(document.getElementById('searchbar').value);
+              if(key == 13) getMissionType(document.getElementById('searchbar').value);
           }
         </script>
       </div>
@@ -58,12 +58,12 @@
           
           
  
-        <div class="panel">
-          <h2 class="accordion" id="metadata">&#8618; Meta Data: </h2>
-          <p id="metaMissionID"></p>
-          <p id="metaAreaCovered"></p>
-          <p id="metaTotalArea"></p>
-          <p id="metaDateCreated"></p>
+        <div class="panel" id="metaPanel">
+          <h2 class="accordion" hidden="true" id="metadata">&#8618; Meta Data: </h2>
+          <p id="metaMissionID" class="metaTag" visible="false"></p>
+          <p id="metaAreaCovered" class="metaTag"></p>
+          <p id="metaTotalArea"  class="metaTag"></p>
+          <p id="metaDateCreated" class="metaTag"></p>
           <h2 class="accordion" id="results"> 0 Result Found </h2> 
           <table cellspacing="2" cellpadding="0" border='2' id="polyIDtable" hidden="true">
           <tbody>
