@@ -1,4 +1,4 @@
-const areaOfUk = 242495;
+var areaOfUk = 0;
 var areaData = [];
 var imageData = [];
 var layerData =[];
@@ -8,6 +8,39 @@ var activeSearch = false;
 var searchQ = [];
 var missionsLoaded = false; 
 var graphClicked = false;
+var counties = [];
+var missionsInUk = [];
+var before_load = new Date().getTime();
+var aftr_loadtime;
+var totalmissions = 0;
+var countiesData;
+var ukbordersData;
+var regionsData;
+var arrcreated = false;
+
+fetch('data/ukBorders.geojson')
+    .then(Response => Response.text())
+    .then((data) => {
+        countiesData = JSON.parse(data);
+        ukbordersData = JSON.parse(data);
+        for (var i = 0; i < countiesData.features.length; i++) {
+            countiesData.features[i].geometry = turf.simplify(turf.cleanCoords(countiesData.features[i].geometry), { tolerance: 0.0001 });
+        }
+        for (var i = 0; i < countiesData.features[0].geometry.coordinates.length; i++) {
+            areaOfUk = areaOfUk + (turf.area(turf.polygon(countiesData.features[0].geometry.coordinates[i])) / 1000000);
+        }
+
+    }
+    )
+
+fetch('data/ukcounties.geojson').then(Response => Response.text()).then((data) => {
+    regionsData = JSON.parse(data)
+    for (var i = 0; i < regionsData.features.length; i++) {
+        regionsData.features[i].geometry = turf.simplify(turf.cleanCoords(regionsData.features[i].geometry), { tolerance: 0.0001 });
+    }
+})
+
+
 
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 function initMap(){
@@ -27,7 +60,7 @@ function initMap(){
     document.getElementById('loadingScreen').style.display = "none";
     console.log("All missions have been added to map");
     missionsLoaded = true; 
-    miss
+    missionsInCounties();
 }, 15000);
 }
 
@@ -471,18 +504,18 @@ function missionsInCounties() {           //Function that calculates the percent
     for (var i = 0; i < missionsInUk.length; i++) {
         var intersects = false;
         var intersectsAt = 0;
-         for (var j = 0; j < missionsInUk.length; i++) {
-             if (j = i) {
-                 j++;
-             }
-             if (finalmissions != undefined) {
-                 intersects = true
-                 intersectsAt = j;
-                 missionsInUk[i] = turf.intersect(missionsInUk[i].coords, missionsInUk[j].coords);
-                 missionsInUk.slice[j];
-            }
+        // for (var j = 0; j < missionsInUk.length; i++) {
+        //     if (j = i) {
+        //         j++;
+        //     }
+        //     if (finalmissions != undefined) {
+        //         intersects = true
+        //         intersectsAt = j;
+        //         missionsInUk[i] = turf.intersect(missionsInUk[i].coords, missionsInUk[j].coords);
+        //         missionsInUk.slice[j];
+        //     }
 
-         }
+        // }
         addToMap(missionsInUk[i].coords);
     }
 }
