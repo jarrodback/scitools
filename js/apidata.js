@@ -7,6 +7,7 @@ var markerGroup = L.layerGroup();
 var activeSearch = false; 
 var searchQ = [];
 var missionsLoaded = false; 
+var graphClicked = false;
 
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 function initMap(){
@@ -172,6 +173,7 @@ function getProductFromImageData(id, callback){
 }
 ///////////////////HISTOGRAM///////////////////
 function dataSort(){
+    if (graphClicked == false){
     for (var x = 0; x < imageData.length; x++) {
         areaData.push(imageData[x].properties.area);
     }
@@ -180,6 +182,8 @@ function dataSort(){
     console.log("Data Sorted "+ x + " records processed");
     console.log("Sorted!");
     getHistogram();
+     graphClicked = true;
+    }
 }
 
 function getHistogram() {
