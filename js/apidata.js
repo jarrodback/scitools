@@ -1,4 +1,6 @@
-const areaOfUk = 242495;
+var areaOfUk = 0;
+var areaOfUkCovered = 0;
+var missionsInUk = [];
 var imageData = [];
 var layerData = [];
 var counties = [];
@@ -16,13 +18,28 @@ var totalmissions = 0;
 var countiesData;
 var ukbordersData;
 var TempJank = [];
+var regionsData;
 
-fetch('data/ukcounties.geojson')
+
+fetch('data/ukBorders.geojson')
     .then(Response => Response.text())
     .then((data) => {
         countiesData = JSON.parse(data);
+        for (var i = 0; i < countiesData.features.length; i++) {
+            countiesData.features[i].geometry = turf.simplify(turf.cleanCoords(countiesData.features[i].geometry), { tolerance: 0.0001 });
+        }
+        for (var i = 0; i < countiesData.features[0].geometry.coordinates.length; i++) {
+            areaOfUk = areaOfUk +  (turf.area(turf.polygon(countiesData.features[0].geometry.coordinates[i])) / 1000000);
+        }
     }
     )
+
+fetch('data/ukcounties.geojson').then(Response => Response.text()).then((data) => {
+    regionsData = JSON.parse(data)
+            for (var i = 0; i < regionsData.features.length; i++) {
+            regionsData.features[i].geometry = turf.simplify(turf.cleanCoords(regionsData.features[i].geometry), { tolerance: 0.0001 });
+        }
+})
 
 
 
@@ -53,26 +70,24 @@ function authenticate() {
             };
             authToken = 'Bearer ' + authenication.access_token;
             getProducts();
+            console.log("done");
         }
     }
 
 }
 function initMap() {
-    //console.log("init");
-
     map = L.map('map').setView([54.3138, -2.169], 6);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
     }).addTo(map);
     addCountiesToMap();
     authenticate();
+
 }
 function addCountiesToMap() {
-    //console.log("adding");
-
     var myStyle = {
         "stroke": true,
-        "color": "#ff0000",
+        "color": "green",
         "weight": 1,
         "fill": true,
         "fillOpacity": 0,
@@ -105,9 +120,9 @@ function getProducts() {
                     missionsInCounties(geoJSONdata);
 
                 });
-
+                
             }
-
+            
         }
     }
 
@@ -191,90 +206,85 @@ document.addEventListener('click', function (event) {
     }
 })
 function missionsInCounties(missionGeoJSON) {           //Function that calculates the percentage of missions inside of a county divided by the total amount of missions
-    //console.log(missionGeoJSON.geometry);
+
     if (arrcreated == false) {          // if the array has been created dont create a new one
-        for (var i = 0; i < countiesData.features.length; i++) {            //create a array the size of the amount of countys
-            counties.push({ name: countiesData.features[i].properties.name, missionsInside: 0, area: 0 });       //push starting values to the array
+        for (var i = 0; i < regionsData.features.length; i++) {            //create a array the size of the amount of countys
+            counties.push({ name: regionsData.features[i].properties.name, missionsInside: 0 });       //push starting values to the array
         }
         arrcreated = true;      //after the array has been created make it unable to create another
     }
+    missionGeoJSON = turf.simplify(turf.cleanCoords(missionGeoJSON), { tolerance: 0.0001 }).geometry
 
+    for (var o = 0, size2 = countiesData.features.length; o < size2; o++) {
 
+        for (var p = 0, size = countiesData.features[o].geometry.coordinates.length; p < size; p++) {
 
-    for (var o = 0; o < countiesData.features.length; o++) {
-
-        for (var p = 0; p < countiesData.features[o].geometry.coordinates.length; p++) {
-
-            //console.log(countiesData.features[i].geometry.coordinates[j][0].length);
             if (countiesData.features[o].geometry.coordinates[p][0].length >= 4) {
 
                 if (countiesData.features[o].geometry.coordinates[p].length > 1) {
 
-                    for (var i = 0; i < countiesData.features[o].geometry.coordinates[p].length; i++) {
-                            TempJank.push(countiesData.features[o].geometry.coordinates[p][i])
-                            var currentSegement = turf.polygon(TempJank);
-                            var intersectarea = turf.intersect(currentSegement, missionGeoJSON.geometry);
-                            TempJank = [];
-                            if (intersectarea != undefined) {
-                                console.log("addedToMap");
-                                addToMap(intersectarea);
-                        }
+                    for (var i = 0, size3 = countiesData.features[o].geometry.coordinates[p].length; i < size3; i++) {
 
+                        TempJank.push(countiesData.features[o].geometry.coordinates[p][i]);
+
+                        var currentSegement = turf.polygon(TempJank);
+                        var intersectarea = turf.intersect(currentSegement, missionGeoJSON);
+                        TempJank = [];
+
+                        if (intersectarea != undefined) {
+
+                            console.log("addedToMap");
+                            addToMap(intersectarea);
+                            areaOfUkCovered += turf.area(intersectarea);
+                            missionsInUk.push({coords : intersectarea})
+
+                        }
                     }
                 }
                 else {
 
                     var currentSegement = turf.polygon(countiesData.features[o].geometry.coordinates[p]);
-                    var intersectarea = turf.intersect(currentSegement, missionGeoJSON.geometry);
+                    var intersectarea = turf.intersect(currentSegement, missionGeoJSON);
+
                     if (intersectarea != undefined) {
+
                         console.log("addedToMap");
-                        addToMap(intersectarea);
-                    }
-                }
-
-            }
-            else {
-                console.log(countiesData.features[o].geometry.coordinates[p][0]);
-            }
-        }
-        //console.log(countiesData.features[i].geometry);
-        //console.log(turf.intersect(countiesData.features[i].geometry, missionGeoJSON.geometry));
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    for (var i = 0; i < countiesData.features.length; i++) {   //For the amount of counties loop
-        for (var j = 0; j < missionGeoJSON.geometry.coordinates[0].length; j = j + 400) {         //for the amount of coordinates in the mission GEOjson loop
-            if (d3.geoContains(countiesData.features[i], missionGeoJSON.geometry.coordinates[0][j])) {     // d3 check to see if it is in a county
-                for (var p = 0; p < counties.length - 1; p++) {     //loop for the amount of counties there are minus international waters
-                    if (countiesData.features[i].properties.name === counties[p].name) {    //if it is in a county add 1 to the county mission counter
-                        counties[p].missionsInside++;
-                        totalmissions++;
+                        missionsInUk.push({coords : intersectarea})
+                        areaOfUkCovered += turf.area(intersectarea);
                     }
                 }
             }
         }
-
-        aftr_loadtime = new Date().getTime();       //code to work out total load time (testing)
-        pgloadtime = (aftr_loadtime - before_load) / 1000
-        //console.log(pgloadtime);
-        for (var q = 0; q < counties.length; q++) { // loop calculates the percentage that each mission uses to 2 decimal places
-            //console.log(counties[q].name + " has " + (((counties[q].missionsInside / totalmissions) * 100).toFixed(1)) + "% missions in it")
-        }
     }
+    console.log((((counties[0].area / 1000000) / areaOfUk) * 100).toFixed(2) + "% of the uk covered");
+
+     for (var i = 0; i < regionsData.features.length; i++) {   //For the amount of counties loop
+         for (var j = 0; j < missionGeoJSON.coordinates[0].length; j = j + 60) {         //for the amount of coordinates in the mission GEOjson loop
+             if (d3.geoContains(regionsData.features[i], missionGeoJSON.coordinates[0][j])) {     // d3 check to see if it is in a county
+                 for (var p = 0; p < counties.length - 1; p++) {     //loop for the amount of counties there are minus international waters
+                     if (regionsData.features[i].properties.name === counties[p].name) {    //if it is in a county add 1 to the county mission counter
+                         counties[p].missionsInside++;
+                         totalmissions++;
+                     }
+                 }
+             }
+         }
+
+         aftr_loadtime = new Date().getTime();       //code to work out total load time (testing)
+         pgloadtime = (aftr_loadtime - before_load) / 1000
+         console.log(pgloadtime);
+         for (var q = 0; q < counties.length; q++) { // loop calculates the percentage that each mission uses to 2 decimal places
+             console.log(counties[q].name + " has " + (((counties[q].missionsInside / totalmissions) * 100).toFixed(1)) + "% missions in it")
+         }
+     }
 
 }
+
+
+
+
+
+
 
 
 
