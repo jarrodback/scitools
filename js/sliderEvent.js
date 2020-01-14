@@ -53,15 +53,3 @@ for(i = 0; i< acc.length;i++){
         panel.style.maxHeight = panel.scrollHeight +"px";
     });
 }
-
-var btn = document.getElementsByTagName('button');
-var i;
-for(i = 0; i< btn.length;i++){
-    if(i == 2)
-    {
-        btn[i].addEventListener("click", function(){
-        var panel = document.getElementsByClassName('panel')[1];
-        panel.style.maxHeight = panel.scrollHeight +"px";
-    });
-    }
-}

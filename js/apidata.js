@@ -216,7 +216,9 @@ function dataSort(){
     console.log("Data Sorted "+ x + " records processed");
     console.log("Sorted!");
     getHistogram();
-     graphClicked = true;
+    graphClicked = true;
+    var panel = document.getElementsByClassName('panel')[1];
+    panel.style.maxHeight = panel.scrollHeight +"px"; 
     }
 }
 
