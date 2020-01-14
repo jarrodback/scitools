@@ -32,6 +32,9 @@
 		
   </head>
   <body>
+    <div id="loadingScreen">
+      <img src="data/ajax-loader.gif"/>
+    </div>
     <div id="sidebar">
         <div id="circle" onclick="toggleSidebar()">
           <div class="toggle-btn">
@@ -52,20 +55,14 @@
           }
         </script>
       </div>
-
       <div id="searchResults"><h2 class="accordion">Search Results:</h2>
-     
-          
-          
- 
         <div class="panel">
           <h2 class="accordion" id="metadata">&#8618; Meta Data: </h2>
           <p id="metaMissionID"></p>
           <p id="metaAreaCovered"></p>
           <p id="metaTotalArea"></p>
-          <p id="metaDateCreated"></p>
-          <h2 class="accordion" id="results"> 0 Result Found </h2> 
-          <table cellspacing="2" cellpadding="0" border='2' id="polyIDtable" hidden="true">
+          <h2 class="accordion" id="results">&#8618; 0 Result Found </h2> 
+          <table cellspacing="2" cellpadding="0" id="polyIDtable" hidden="true">
           <tbody>
           <tr><td>Polygon ID's</td></tr>
           </tbody>
@@ -82,7 +79,8 @@
       </div>
     </div>
     </div>
-    <div id="map"></div>
+    <div id="map">
+    </div>
     <script src="js/leaflet.ajax.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://d3js.org/d3.v5.js"></script>    

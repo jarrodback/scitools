@@ -20,7 +20,7 @@ ul{
   padding: 0 18px;
   overflow: hidden;
   max-height: 0;
-  transition: max-height 0.5s ease-out;
+  transition: max-height 1s ease-out;
 }
 
 #menuDrop{
@@ -41,7 +41,7 @@ transition: all 1s;
   flex-basis: 80%;
   width: 100%;
   z-index: 0;
-  position: absolute;
+  position: relative;
 }
 
 #sidebar{
@@ -167,7 +167,6 @@ input[type=search]:focus {
 #polyIDtable{
   width: auto;
   height: 100%;
-  border: 2px solid black;
   background-color: #0D3B66;
   color: #fff;
 }
@@ -215,6 +214,20 @@ input[type=search]:focus {
   background: #555; 
 }
 
-#histogramDisplay #svg-container{
-   background-color: #000;
+#loadingScreen{
+  width: 3%;
+  height: 6%;
+  background-color: transparent;
+  top:0;
+	bottom: 0;
+	left: 0;
+	right: 0;	
+	margin: auto;
+  position: absolute;
+  z-index: 4;
+}
+
+#loadingScreen img{
+  width: 100%;
+  height: 100%;
 }
