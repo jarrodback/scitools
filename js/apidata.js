@@ -222,9 +222,11 @@ function getMissionType(id){
     //searching for missionID, if found each poly id present in that mission will be pushed to searchQ
     for(var x = 0; x < imageData.length; x++){
         if(id == imageData[x].properties.missionid){
+            //set mission id to found and push all polygons into searchQ
             missionIDfound = true; 
             searchQ.push(imageData[x].properties.id); 
         }else if(id == imageData[x].properties.id){
+            //search for specific polygon 
             searchPolygonID(id);
             break; 
         }
@@ -305,10 +307,9 @@ function searchPolygonID(id){
     //clear poly data
     document.getElementById('polyMetadata').hidden = true; 
     var polyMeta = document.getElementsByClassName('polymetaTag');
-    polyMeta[0].textContent = null;
-    polyMeta[1].textContent = null;
-    polyMeta[2].textContent = null;
-    polyMeta[3].textContent = null;
+    for(var x = 0; x < polyMeta.length; x++){
+        polyMeta[x].textContent = null;
+    }
     //remove all map layers but add back counties 
     for(var x = 0; x < layerData.length; x++){
         map.removeLayer(layerData[x]);
@@ -323,8 +324,7 @@ function searchPolygonID(id){
         currPoly = geoJSONdata; 
         var mapLocation = geoJSONdata.properties.centre.split(",");
         markerGroup.eachLayer(function(layer){
-            map.removeLayer(layer); 
-            console.log(geoJSONdata)   
+            map.removeLayer(layer);   
         });
         //add marker and pan map over to the polygon 
         marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
@@ -362,18 +362,15 @@ function resetData(){
     //clear meta data
     document.getElementById('metadata').hidden = true; 
     var metaText = document.getElementsByClassName('metaTag');
-    metaText[0].textContent = null; 
-    metaText[1].textContent = null; 
-    metaText[2].textContent = null; 
-    metaText[3].textContent = null;     
+    for(var x = 0; x < metaText.length; x++){
+        metaText[x].textContent = null; 
+    }
     //clear poly data
     document.getElementById('polyMetadata').hidden = true; 
     var polyMeta = document.getElementsByClassName('polymetaTag');
-    polyMeta[0].textContent = null;
-    polyMeta[1].textContent = null;
-    polyMeta[2].textContent = null;
-    polyMeta[3].textContent = null;
-    console.log(document.getElementsByClassName('metaTag'));
+    for(var x = 0; x < polyMeta.length; x++){
+        polyMeta[x].textContent = null; 
+    }
 };
 
 var specElement = document.getElementById("searchbar");
@@ -405,6 +402,7 @@ document.addEventListener('click', function(event){
                         polyMeta[2].textContent = 'Polygon Area: ' + geoJSONdata.properties.area.toFixed(2) + 'km²'; 
                         polyMeta[3].textContent = 'Date Created: ' + geoJSONdata.properties.datecreated; 
                     }); 
+                    //add markers to polygon target
                     marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
                     marker.addTo(markerGroup);
                     marker.addTo(map);
@@ -467,6 +465,4 @@ legend.onAdd = function (map) {
     return div;
 };
 legend.addTo(map);
-
-
 
