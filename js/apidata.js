@@ -24,7 +24,7 @@ function initMap(){
     }
     document.getElementById('loadingScreen').style.display = "none";
     console.log("All missions have been added to map");
-}, 20000);
+}, 15000);
 }
 
 function getAreaColour(feature){
@@ -102,7 +102,6 @@ function getTokenPHP(){
     });
 }
 function getProductSearchPHP(){
-    // return getTokenPHP().then(function (result){
     //    // result is api key
         return fetch('api/productsearch/', {
             method: 'POST',
@@ -117,10 +116,8 @@ function getProductSearchPHP(){
             return response.text();
                 //text is array of ids
         });
-    //});
 }
 function getProductGeoJSONPHP(){
-    //  getTokenPHP().then(function(result){
     //     //result is api key
          getProductSearchPHP().then(function(idarray){
             //idarray is array of ids
@@ -146,11 +143,8 @@ function getProductGeoJSONPHP(){
                 });
             }
         });
-    //});
 }
 function getProductByIDPHP(id, callback){
-    // getTokenPHP().then(function(result){
-    //     var body = id + " " + result;
         fetch('api/productinfo/', {
         method: 'POST',
         mode: "same-origin",
@@ -166,7 +160,6 @@ function getProductByIDPHP(id, callback){
             callback(json);
         });
     })
-    //});
 }
 function getProductFromImageData(id, callback){
     for(var x=0; x<imageData.length; x++){
@@ -179,9 +172,6 @@ function getProductFromImageData(id, callback){
 function dataSort(){
     //sorting the areas in ascending order
     areaData.sort(function(a,b){return a-b});
-    /* for( var x = 0; x < areaData.length; x++){
-        console.log(areaData[x]);
-    }  */  
     window.alert("Data Sorted");
     console.log("Sorted!");
 }
