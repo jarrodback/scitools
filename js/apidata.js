@@ -62,14 +62,16 @@ function initMap() {
     maxZoom: 9,
     minZoom: 6
   }).addTo(map);
-  //   addCountiesToMap();
+  addCountiesToMap();
   fetch("data/images.json")
     .then(response => response.text())
     .then(data => {
       imageData = JSON.parse(data);
-      for (var x = 0; x < imageData.length; x++) {
-        addToMap(imageData[x]);
-      }
+    //   for (var x = 0; x < imageData.length; x++) {
+    //     addToMap(imageData[x]);
+    //   }
+        resetData();
+        repopulateMap();
     })
     .catch(error => {
       console.log(error);
@@ -86,6 +88,7 @@ function initMap() {
         document.getElementById("loadingScreen").style.display = "none";
       }, 20000);
     });
+
 }
 function getNewData() {
   imageData = [];
@@ -129,6 +132,7 @@ function addCountiesToMap() {
     style: myStyle,
     onEachFeature: function onEachFeature(feature, layer) {
       layer.bindPopup("Region: " + feature.properties.name);
+      layer.bringToBack();
     }
   });
   geojsonLayer.addTo(map);
@@ -798,9 +802,7 @@ document.addEventListener("click", function(event) {
 function missionsInCounties() {
   //Function that calculates the percentage of missions inside of a county divided by the total amount of missions
   var worker = new Worker("js/worker.js");
-  for (var x = 0; x < layerData; x++) {
-    map.removeLayer(layerData);
-  } // turf simplify, turf cleancoords, turf polygon, turf intersect, turf area, d3 geocontains
+  // turf simplify, turf cleancoords, turf polygon, turf intersect, turf area, d3 geocontains
   worker.postMessage([
     imageData,
     arrcreated,
@@ -810,6 +812,7 @@ function missionsInCounties() {
   ]);
 
   worker.onmessage = function(e) {
+
     counties = e.data[0];
     missionsInUk = e.data[1];
     aftr_loadtime = new Date().getTime(); //code to work out total load time (testing)
@@ -817,7 +820,7 @@ function missionsInCounties() {
     console.log(pgloadtime);
     console.log(counties, missionsInUk);
     worker.terminate();
-    for (var u = 0; u < imageData[0].length; u++) {
+    for (var u = 0; u < imageData.length; u++) {
       missionGeoJSON = imageData[u];
       for (var i = 0; i < regionsData.length; i++) {
         //For the amount of counties loop
@@ -837,7 +840,18 @@ function missionsInCounties() {
         }
       }
     }
+
+    imageData = [];
+    imageData = missionsInUk;
+
+    resetData();
+    repopulateMap();
+
+    saveFile();
   };
+ 
+  document.getElementById("loadingScreen").style.display = "none";
+
 }
 
 function saveFile(data) {

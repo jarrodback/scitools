@@ -38,5 +38,4 @@ onmessage = function (e) {
 
     console.log("loaded DATA successfully");
     postMessage([counties, missionsInUk]);
-    saveFile();
 }
