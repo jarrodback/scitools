@@ -71,15 +71,11 @@ function initMap(){
     .then(response => response.text())
     .then(data => {
       imageData = JSON.parse(data);
-    //   for (var x = 0; x < imageData.length; x++) {
-    //     addToMap(imageData[x]);
-    //   }
         resetData();
         repopulateMap();
         missionsLoaded = true;
         loadGlobalMeta();
         console.log(L.layerGroup());
-
     })
     .catch((error)=> {
         console.log(error);
@@ -94,6 +90,12 @@ function initMap(){
             loadGlobalMeta();
             document.getElementById('loadingScreen').style.display = "none";
         }, 20000);
+    });
+    fetch("data/counties.json")
+    .then(response=> response.text())
+    .then(data=> {
+        counties = JSON.parse(data);
+        showRegionHistogram();
     });
 
 }
@@ -506,7 +508,7 @@ function missionsInCounties() {
     aftr_loadtime = new Date().getTime(); //code to work out total load time (testing)
     pgloadtime = (aftr_loadtime - before_load) / 1000;
     console.log(pgloadtime);
-    console.log(counties, missionsInUk);
+    console.log(counties, missionsInUk, JSON.stringify(counties));
     worker.terminate();
     for (var u = 0; u < imageData.length; u++) {
       missionGeoJSON = imageData[u];
