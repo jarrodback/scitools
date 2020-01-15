@@ -273,33 +273,3 @@ input[type=search]:focus {
   background-color: rgba(255, 255, 255, 1);
 }
 
-#functionButtons{
-  width: 100%;
-  display: inline-flex;
-}
-
-#functionButtons button{
- padding: 20px;
- color: #000;
- font-weight: bold;
- font-size: 20px;
- position: relative;
- display: inline-block;
- background-color: #FFF;
- border-bottom: none;
- text-align: center;
- border: 1px solid black;
-}
-
-#functionButtons button:first-child{
- width: 60%;
-}
-
-#functionButtons button:last-child{
- width: 40%;
-}
-
-#functionButtons button:hover{
- cursor: pointer;
- background-color: #FFAAAA;
-}
