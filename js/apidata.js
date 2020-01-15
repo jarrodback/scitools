@@ -237,8 +237,21 @@ function dataSort() {
         }
         console.log( x + " records processed");
         getHistogram();
-        showCountyHistogram()
         graphClicked = true;
+        var panel = document.getElementsByClassName('panel')[1];
+        panel.style.maxHeight = panel.scrollHeight +"px";
+    }
+    // overwriting the values in array if button is repressed, this is to stop the data duplicating
+    else
+        {
+        for (var x = 0; x < imageData.length; x++){
+            areaData[x] = imageData[x].properties.area;
+            startDates[x] = imageData[x].properties.startdate;
+        }
+        for (var y = 0; y < imageData.length; y++){
+                areaData[x][y] = imageData[y].properties.missionid;
+        }  
+        getHistogram();      
     }
 }
 function getHistogram1() {
