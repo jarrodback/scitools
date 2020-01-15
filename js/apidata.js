@@ -40,6 +40,22 @@ fetch('data/ukcounties.geojson').then(Response => Response.text()).then((data) =
         regionsData.features[i].geometry = turf.simplify(turf.cleanCoords(regionsData.features[i].geometry), { tolerance: 0.0001 });
     }
 })
+///////////////////LOAD IN GLOBAL META DATA///////////////////////////
+function loadGlobalMeta(){
+    console.log('loading global meta data'); 
+    var globalArea;
+    var globalCoverage; 
+    for(var x = 0; x < imageData.length; x++){
+        globalArea += imageData[x].properties.area; 
+    } 
+
+    globalCoverage = ((globalArea/areaOfUk)*100).toFixed(6) + '%';
+    document.getElementById('globalArea').visible = true; 
+    document.getElementById('globalCoverage').visible = true; 
+    document.getElementById('globalArea').innerHTML = 'Global Polygon Area: ' + globalArea;
+    document.getElementById('globalCoverage').innerHTML = 'Global UK Coverage: ' + globalCoverage; 
+}
+
 
 
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
@@ -60,6 +76,7 @@ function initMap(){
         resetData();
         repopulateMap();
         missionsLoaded = true;
+        loadGlobalMeta();
         console.log(L.layerGroup());
 
     })
@@ -73,6 +90,7 @@ function initMap(){
                 addToMap(imageData[x]);
             }
             missionsLoaded = true;
+            loadGlobalMeta();
             document.getElementById('loadingScreen').style.display = "none";
         }, 20000);
     });
@@ -124,7 +142,7 @@ function addCountiesToMap(){
     var geojsonLayer = new L.GeoJSON.AJAX("data/ukcounties.geojson", {
         style:myStyle, 
         onEachFeature: function onEachFeature(feature, layer){
-            layer.bindPopup("Region: " + feature.properties.name);
+            // layer.bindPopup("Region: " + feature.properties.name);
         }
     });
     geojsonLayer.addTo(map);
