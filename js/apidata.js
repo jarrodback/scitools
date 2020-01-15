@@ -360,7 +360,7 @@ function getMissionById(id){
     document.getElementById('metaMissionID').innerHTML = '<b>Current Mission ID</b>: ' + currentMission.properties.missionid;
     document.getElementById('metaTotalArea').innerHTML = '<b>Total Mission Area</b>: ' + areaTotal + "km²";
     document.getElementById('metaAreaCovered').innerHTML = '<b>Mission UK Coverage</b>: ' + ((areaTotal/areaOfUk)*100).toFixed(6) + '%';
-    document.getElementById('metaDateCreated').innerHTML = '<b>Date Created</b>: ' + currentMission.properties.datecreated;
+    document.getElementById('metaDateCreated').innerHTML = '<b>Mission Start Date</b>: ' + currentMission.properties.startdate; 
     //display ammount of results found from search
     if(searchQ.length > 1) document.getElementById("results").innerHTML = "&#8618; " + searchQ.length + " Results found";
     else document.getElementById("results").innerHTML = "&#8618; " + searchQ.length + " Result found";      
@@ -428,7 +428,7 @@ function searchPolygonID(id){
     metaText[0].innerHTML = '<b>Polygon ID</b>: ' + currPoly.properties.id; 
     metaText[1].innerHTML = '<b>Polygon UK Coverage</b>: ' + currPoly.properties.percentage.toFixed(6) + '%';; 
     metaText[2].innerHTML = '<b>Polygon Area</b>: ' + currPoly.properties.area; 
-    metaText[3].innerHTML = '<b>Date Created</b>: ' + currPoly.properties.datecreated; 
+    metaText[3].innerHTML = '<b>Mission Start Date</b>: ' + currPoly.properties.startdate; 
 };
 
 function resetData(){
@@ -487,7 +487,7 @@ document.addEventListener('click', function(event){
                         polyMeta[0].innerHTML = '<b>Selected Polygon ID</b>: ' + geoJSONdata.properties.id; 
                         polyMeta[1].innerHTML = '<b>Polygon UK Coverage</b>: ' + geoJSONdata.properties.percentage.toFixed(6) + '%';
                         polyMeta[2].innerHTML = '<b>Polygon Area</b>: ' + geoJSONdata.properties.area.toFixed(2) + 'km²'; 
-                        polyMeta[3].innerHTML = '<b>Date Created</b>: ' + geoJSONdata.properties.datecreated; 
+                        polyMeta[3].innerHTML = '<b>Mission Start Date</b>: ' + geoJSONdata.properties.startdate; 
                     }); 
                     //add markers to polygon target
                     marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
