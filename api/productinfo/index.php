@@ -21,6 +21,8 @@ function getProductJSON(){
         $data = json_decode($response);
         $datemodified =date ('Y-m-d H:i:s', $data->product->result->datemodified/1000);
         $datecreated =date ('Y-m-d H:i:s', $data->product->result->datecreated/1000);
+        $startdate =date ('Y-m-d H:i:s', $data->product->result->objectstartdate/1000);
+        $enddate =date ('Y-m-d H:i:s', $data->product->result->objectenddate/1000);
         
         $jsonData = array(
           "type" => "Feature",
@@ -32,7 +34,9 @@ function getProductJSON(){
             "id" =>  $content,
             "centre" =>  $data->product->result->centre,
             "datemodified" => $datemodified,
-            "datecreated" => $datecreated
+            "datecreated" => $datecreated,
+            "startdate" => $startdate,
+            "enddate" => $enddate
           ),
           "geometry" => $data->product->result->footprint
         );

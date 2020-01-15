@@ -40,8 +40,6 @@ fetch('data/ukcounties.geojson').then(Response => Response.text()).then((data) =
     }
 })
 
-
-
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 function initMap(){
   map = L.map('map').setView([54.3138, -2.169], 6);
@@ -59,9 +57,9 @@ function initMap(){
     }
     document.getElementById('loadingScreen').style.display = "none";
     console.log("All missions have been added to map");
+    console.log(imageData);
     missionsLoaded = true; 
-    missionsInCounties();
-}, 15000);
+}, 20000);
 }
 
 function getAreaColour(feature){
@@ -154,14 +152,16 @@ function getProductSearchPHP(){
                 //text is array of ids
         });
 }
-function getProductGeoJSONPHP(){
+async function getProductGeoJSONPHP(){
     //     //result is api key
          getProductSearchPHP().then(function(idarray){
             //idarray is array of ids
             var json = JSON.parse(idarray);
+
             for(var x=0; x < json.length; x++){
                 var body = json[x].id;
-                 fetch('api/productinfo/', {
+
+                   fetch('api/productinfo/', {
                     method: 'POST',
                     mode: "same-origin",
                     credentials: "same-origin",
@@ -173,11 +173,9 @@ function getProductGeoJSONPHP(){
                 .then(function(response){
                     response.json().then(function(json){
                         imageData.push(json);
+                        document.querySelector('.loadingScreen p').innerHTML = ("Loading " + imageData.length + "/61");
                     });
                 })
-                .then(function(response){
-                    document.querySelector('.loadingScreen p').innerHTML = ("Loading " + imageData.length + "/61");
-                });
             }
         });
 }
@@ -452,6 +450,9 @@ document.addEventListener('click', function(event){
 });
 
 function missionsInCounties() {           //Function that calculates the percentage of missions inside of a county divided by the total amount of missions
+    for(var x = 0; x < layerData.length; x++){
+        map.removeLayer(layerData[x]);
+    }
     for (var u = 0; u < imageData.length; u++) {
         console.log("Loading");
         missionGeoJSON = imageData[u];
@@ -474,7 +475,7 @@ function missionsInCounties() {           //Function that calculates the percent
                     intersectarea.properties = imageData[u].properties;
                     intersectarea.properties.area= turf.area(intersectarea)/1000000;
                     intersectarea.properties.percentage = ((intersectarea.properties.area/areaOfUk) *100);
-                    missionsInUk.push({ coords: intersectarea });
+                    missionsInUk.push(intersectarea);
                 }
             }
         }
@@ -518,7 +519,10 @@ function missionsInCounties() {           //Function that calculates the percent
         //     }
 
         // }
-        addToMap(missionsInUk[i].coords);
+
+        addToMap(missionsInUk[i]);
+        imageData = missionsInUk;
+        console.log("new imagedata : " + missionsInUk);
     }
 }
 
