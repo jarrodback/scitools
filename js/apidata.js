@@ -332,10 +332,10 @@ function getMissionById(id){
     areaTotal = parseFloat(areaTotal.toFixed(2)); 
     //updating meta data
     document.getElementById('metadata').hidden = false; 
-    document.getElementById('metaMissionID').textContent = 'Current Mission ID: ' + currentMission.properties.missionid;
-    document.getElementById('metaTotalArea').textContent = 'Total Mission Area: ' + areaTotal + "km²";
-    document.getElementById('metaAreaCovered').textContent = 'Mission UK Coverage: ' + ((areaTotal/areaOfUk)*100).toFixed(6) + '%';
-    document.getElementById('metaDateCreated').textContent = 'Date Created: ' + currentMission.properties.datecreated;
+    document.getElementById('metaMissionID').innerHTML = '<b>Current Mission ID</b>: ' + currentMission.properties.missionid;
+    document.getElementById('metaTotalArea').innerHTML = '<b>Total Mission Area</b>: ' + areaTotal + "km²";
+    document.getElementById('metaAreaCovered').innerHTML = '<b>Mission UK Coverage</b>: ' + ((areaTotal/areaOfUk)*100).toFixed(6) + '%';
+    document.getElementById('metaDateCreated').innerHTML = '<b>Date Created</b>: ' + currentMission.properties.datecreated;
     //display ammount of results found from search
     if(searchQ.length > 1) document.getElementById("results").innerHTML = "&#8618; " + searchQ.length + " Results found";
     else document.getElementById("results").innerHTML = "&#8618; " + searchQ.length + " Result found";      
@@ -370,7 +370,7 @@ function searchPolygonID(id){
     document.getElementById('polyMetadata').hidden = true; 
     var polyMeta = document.getElementsByClassName('polymetaTag');
     for(var x = 0; x < polyMeta.length; x++){
-        polyMeta[x].textContent = null;
+        polyMeta[x].innerHTML = null;
     }
     //remove all map layers but add back counties 
     for(var x = 0; x < layerData.length; x++){
@@ -400,10 +400,10 @@ function searchPolygonID(id){
     //update meta data
     document.getElementById('metadata').hidden = false; 
     var metaText = document.getElementsByClassName('metaTag');
-    metaText[0].textContent = 'Polygon ID: ' + currPoly.properties.id; 
-    metaText[1].textContent = 'Polygon UK Coverage: ' + currPoly.properties.percentage.toFixed(6) + '%';; 
-    metaText[2].textContent = 'Polygon Area: ' + currPoly.properties.area; 
-    metaText[3].textContent = 'Date Created: ' + currPoly.properties.datecreated; 
+    metaText[0].innerHTML = '<b>Polygon ID</b>: ' + currPoly.properties.id; 
+    metaText[1].innerHTML = '<b>Polygon UK Coverage</b>: ' + currPoly.properties.percentage.toFixed(6) + '%';; 
+    metaText[2].innerHTML = '<b>Polygon Area</b>: ' + currPoly.properties.area; 
+    metaText[3].innerHTML = '<b>Date Created</b>: ' + currPoly.properties.datecreated; 
 };
 
 function resetData(){
@@ -425,13 +425,13 @@ function resetData(){
     document.getElementById('metadata').hidden = true; 
     var metaText = document.getElementsByClassName('metaTag');
     for(var x = 0; x < metaText.length; x++){
-        metaText[x].textContent = null; 
+        metaText[x].innerHTML = null; 
     }
     //clear poly data
     document.getElementById('polyMetadata').hidden = true; 
     var polyMeta = document.getElementsByClassName('polymetaTag');
     for(var x = 0; x < polyMeta.length; x++){
-        polyMeta[x].textContent = null; 
+        polyMeta[x].innerHTML = null; 
     }
 };
 
@@ -459,10 +459,10 @@ document.addEventListener('click', function(event){
                         //ADD META DATA FOR EACH POLYGON 
                         document.getElementById('polyMetadata').hidden = false; 
                         var polyMeta = document.getElementsByClassName('polymetaTag');
-                        polyMeta[0].textContent = 'Selected Polygon ID: ' + geoJSONdata.properties.id; 
-                        polyMeta[1].textContent = 'Polygon UK Coverage: ' + geoJSONdata.properties.percentage.toFixed(6) + '%';
-                        polyMeta[2].textContent = 'Polygon Area: ' + geoJSONdata.properties.area.toFixed(2) + 'km²'; 
-                        polyMeta[3].textContent = 'Date Created: ' + geoJSONdata.properties.datecreated; 
+                        polyMeta[0].innerHTML = '<b>Selected Polygon ID</b>: ' + geoJSONdata.properties.id; 
+                        polyMeta[1].innerHTML = '<b>Polygon UK Coverage</b>: ' + geoJSONdata.properties.percentage.toFixed(6) + '%';
+                        polyMeta[2].innerHTML = '<b>Polygon Area</b>: ' + geoJSONdata.properties.area.toFixed(2) + 'km²'; 
+                        polyMeta[3].innerHTML = '<b>Date Created</b>: ' + geoJSONdata.properties.datecreated; 
                     }); 
                     //add markers to polygon target
                     marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
