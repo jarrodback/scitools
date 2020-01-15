@@ -1,5 +1,6 @@
 var areaOfUk = 0;
 var areaData = [];
+var startDates = [];
 var imageData = [];
 var layerData =[];
 let map;
@@ -136,6 +137,7 @@ function addToMap(data){
             + '<br><a href="#" class="popupSearchPolygonId">Search this ID</a>');
         }
     }).addTo(map);
+    dataSort();
 }
 function repopulateMap(){
     for(var x = 0; x < imageData.length; x++){
@@ -234,13 +236,170 @@ function dataSort() {
         }
         console.log( x + " records processed");
         getHistogram();
+        showCountyHistogram()
         graphClicked = true;
-        var panel = document.getElementsByClassName('panel')[1];
-        panel.style.maxHeight = panel.scrollHeight +"px";
     }
+}
+function getHistogram1() {
+    // using plot.ly
+    var trace = {
+        histfunc: "sum",
+        x: startDates,
+        y: areaData,
+        type: 'histogram',
+        cumulative:{enabled: true},
+        marker: {
+            color: '#0D3B66'
+        },
+    };
+    var layout = {
+
+        title: {
+            text: 'Area covered per day(Cumalative)',
+            font: {
+                family: 'Courier New, monospace',
+                size: 24
+            },
+        },
+
+        xaxis: {
+            title: {
+                text: 'Mission Date',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+
+        yaxis: {
+            title: {
+                text: 'Area km²',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+
+        plot_bgcolor: '#F95738',
+        paper_bgcolor: '#F95738'
+    };
+
+    Plotly.newPlot('histogramDisplay', [trace], layout)
+        .then(() => {
+            return Plotly.toImage({ setBackground: setBackground })
+        });
 }
 
 function getHistogram() {
+    // using plot.ly
+    var trace = {
+        histfunc: "sum",
+        x: startDates,
+        y: areaData,
+        type: 'histogram',
+        marker: {
+            color: '#0D3B66'
+        },
+    };
+    var layout = {
+        title: {
+            text: 'Area covered per day',
+            font: {
+                family: 'Courier New, monospace',
+                size: 24
+            },
+        },
+
+        xaxis: {
+            title: {
+                text: 'Mission Date',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+
+        yaxis: {
+            title: {
+                text: 'Area km²',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+
+        plot_bgcolor: '#F95738',
+        paper_bgcolor: '#F95738'
+    };
+
+    Plotly.newPlot('histogramDisplay', [trace], layout);
+}
+
+function showCountyHistogram(){
+    var data;
+    var x = [];
+    var y = [];
+    for(var x1 = 0; x1 < counties.length; x1++)
+    {
+        x[x1] = counties[x1].name;
+        y[x1] = counties[x1].missionsInside;
+    }  
+    var data = [
+        {
+            histfunc: "sum",
+            y: y,
+            x: x,
+            type: "histogram",
+            name: "sum"
+        }
+    ];
+    var layout = {
+
+        plot_bgcolor: '#F95738',
+        paper_bgcolor: '#F95738',
+
+        title: {
+            text: 'Number of missions per county',
+            font: {
+                family: 'Courier New, monospace',
+                size: 24
+            },
+        },
+        xaxis: {
+            title: {
+                text: 'Counties',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+        yaxis: {
+            title: {
+                text: 'Number of Missions',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        }
+    }
+    Plotly.newPlot('countiesHistogram', data, layout);
+    var panel = document.getElementsByClassName('panel')[1];
+    panel.style.maxHeight = panel.scrollHeight +"px"; 
+}
+
+function getHistogram2() {
     // using plot.ly
     var trace = {
         x: areaData,
