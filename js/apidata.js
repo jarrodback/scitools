@@ -204,19 +204,15 @@ function getProductFromImageData(id, callback){
     }
 }
 ///////////////////HISTOGRAM///////////////////
-function dataSort(){
-    if (graphClicked == false){
-    for (var x = 0; x < imageData.length; x++) {
-        areaData.push(imageData[x].properties.area);
-    }
-    //sorting the areas in ascending order
-    areaData.sort(function(a,b){return a-b});
-    console.log("Data Sorted "+ x + " records processed");
-    console.log("Sorted!");
-    getHistogram();
-    graphClicked = true;
-    var panel = document.getElementsByClassName('panel')[1];
-    panel.style.maxHeight = panel.scrollHeight +"px"; 
+function dataSort() {
+    // storing mission area into array
+    if (graphClicked == false) {
+        for (var x = 0; x < imageData.length; x++) {
+            areaData.push(imageData[x].properties.area, imageData[x].properties.missionid);
+        }
+        console.log( x + " records processed");
+        getHistogram();
+        graphClicked = true;
     }
 }
 
