@@ -70,7 +70,18 @@ function initMap(){
         }, 20000);
     });
 }
-
+function getNewData(){
+    imageData = [];
+    getProductGeoJSONPHP();
+    setTimeout(function(){
+        for(var x = 0; x < imageData.length; x++){
+            imageData[x].properties.area = (turf.area(turf.polygon(imageData[x].geometry.coordinates))/1000000);
+            imageData[x].properties.percentage = (imageData[x].properties.area / areaOfUk ) * 100;
+            addToMap(imageData[x]);
+        }
+        document.getElementById('loadingScreen').style.display = "none";
+    }, 20000);
+}
 function getAreaColour(feature){
     if(feature.properties.area < 100){
         return {fillColor: '#FED976', color: '#FED976'};
@@ -249,6 +260,7 @@ function getHistogram() {
 
         xaxis: {
             title: {
+                rangemode: 'tozero',
                 text: 'Area km²',
                 font: {
                     family: 'Courier New, monospace',
