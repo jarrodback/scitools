@@ -413,24 +413,25 @@ function getHistogram() {
         var pts = '';
         for(var i=0; i < data.points.length; i++){
             pts = data.points[i].x;
+            console.log(pts);
         }
 
         //X axis values of histogram bars increasing 50 each time; 
         //add hover over 
 
         var histoBarPts = []; 
-        histoBarPts.push(25);
-        histoBarPts.push(75);
-        histoBarPts.push(125); 
-        histoBarPts.push(175);
-        histoBarPts.push(225); 
-        histoBarPts.push(275);
-        histoBarPts.push(325); 
-        histoBarPts.push(375);
-        histoBarPts.push(425);
-        histoBarPts.push(475); 
-        histoBarPts.push(525);
-        histoBarPts.push(575); 
+        histoBarPts.push(0);
+        histoBarPts.push(50);
+        histoBarPts.push(100); 
+        histoBarPts.push(150);
+        histoBarPts.push(200); 
+        histoBarPts.push(250);
+        histoBarPts.push(300); 
+        histoBarPts.push(350);
+        histoBarPts.push(400);
+        histoBarPts.push(450); 
+        histoBarPts.push(500);
+        histoBarPts.push(550); 
 
         for(var i=0; i < histoBarPts.length; i++){
             if(pts == histoBarPts[i]){
@@ -446,7 +447,7 @@ function getHistogram() {
                     //range 0 - 50 
                     console.log("range 0-50")
                     for(var x = 0; x < imageData.length; x++){
-                        if(imageData[x].properties.area < 50){
+                        if(imageData[x].properties.area <= 50){
                             areaSearchQ.push(imageData[x].properties.id); 
                         }
                     }
@@ -456,7 +457,7 @@ function getHistogram() {
                     //range 50 - 100 
                     console.log("range 50-100")
                     for(var x = 0; x < imageData.length; x++){
-                        if(imageData[x].properties.area > 50 && imageData[x].properties.area < 100){
+                        if(imageData[x].properties.area >= 50 && imageData[x].properties.area <= 100){
                             areaSearchQ.push(imageData[x].properties.id); 
                         }
                     }
@@ -466,7 +467,7 @@ function getHistogram() {
                     //range 100 - 150  
                     console.log("range 100-150")
                     for(var x = 0; x < imageData.length; x++){
-                        if(imageData[x].properties.area > 100 && imageData[x].properties.area < 150){
+                        if(imageData[x].properties.area >= 100 && imageData[x].properties.area <= 150){
                             areaSearchQ.push(imageData[x].properties.id); 
                         }
                     }
@@ -476,7 +477,7 @@ function getHistogram() {
                     //range 150 - 200  
                     console.log("range 150-200")
                     for(var x = 0; x < imageData.length; x++){
-                        if(imageData[x].properties.area > 150 && imageData[x].properties.area < 200){
+                        if(imageData[x].properties.area >= 150 && imageData[x].properties.area <= 200){
                             areaSearchQ.push(imageData[x].properties.id); 
                         }
                     }
@@ -486,27 +487,84 @@ function getHistogram() {
                     //range 200 - 250
                     console.log("range 200-250")
                     for(var x = 0; x < imageData.length; x++){
-                        if(imageData[x].properties.area > 200 && imageData[x].properties.area < 250){
+                        if(imageData[x].properties.area >= 200 && imageData[x].properties.area <= 250){
                             areaSearchQ.push(imageData[x].properties.id); 
                         }
-                        break;
+                        
                     }
+                    break;
                 };
                 case 6: {
-                    //range 250 - 300  
+                    console.log("range 250-300")  
                     for(var x = 0; x < imageData.length; x++){
-                        if(imageData[x].properties.area > 250 && imageData[x].properties.area < 300){
+                        if(imageData[x].properties.area >= 250 && imageData[x].properties.area <= 300){
                             areaSearchQ.push(imageData[x].properties.id); 
                         }
-                        break;
+                    
                     }
+                    break;
                 };
-                case 7:
-                case 8:
-                case 9:
-                case 10:
-                case 11:
-                case 12:
+                case 7: {
+                    console.log("range 300-350")  
+                    for(var x = 0; x < imageData.length; x++){
+                        if(imageData[x].properties.area >= 300 && imageData[x].properties.area <= 350){
+                            areaSearchQ.push(imageData[x].properties.id); 
+                        }
+                      
+                    }
+                    break;
+                };
+                case 8: {
+                    console.log("range 350-400")  
+                    for(var x = 0; x < imageData.length; x++){
+                        if(imageData[x].properties.area >= 350 && imageData[x].properties.area <= 400){
+                            areaSearchQ.push(imageData[x].properties.id); 
+                        }
+                      
+                    }
+                    break;
+                };
+                case 9: {
+                    console.log("range 400-450")  
+                    for(var x = 0; x < imageData.length; x++){
+                        if(imageData[x].properties.area >= 400 && imageData[x].properties.area <= 450){
+                            areaSearchQ.push(imageData[x].properties.id); 
+                        }
+                        
+                    }
+                    break;
+                };
+                case 10: {
+                    console.log("range 450-500")  
+                    for(var x = 0; x < imageData.length; x++){
+                        if(imageData[x].properties.area >= 450 && imageData[x].properties.area <= 500){
+                            areaSearchQ.push(imageData[x].properties.id); 
+                        }
+                     
+                    }
+                break;
+                };
+            //REMOVE REPEATED CODE
+                case 11: {
+                    console.log("range 500-525")  
+                    for(var x = 0; x < imageData.length; x++){
+                        if(imageData[x].properties.area >= 500){
+                            areaSearchQ.push(imageData[x].properties.id); 
+                        }
+                    
+                    }
+                    break;
+                };
+                case 12: {
+                    console.log("range 525+")  
+                    for(var x = 0; x < imageData.length; x++){
+                        if(imageData[x].properties.area >= 500){
+                            areaSearchQ.push(imageData[x].properties.id); 
+                        }
+                        
+                    }
+                    break;
+                };
         }
     console.log(areaSearchQ);
     
