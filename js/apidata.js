@@ -233,6 +233,7 @@ function dataSort() {
     if (graphClicked == false) {
         for (var x = 0; x < imageData.length; x++) {
             areaData.push(imageData[x].properties.area, imageData[x].properties.missionid);
+            startDates.push(imageData[x].properties.startdate);
         }
         console.log( x + " records processed");
         getHistogram();
