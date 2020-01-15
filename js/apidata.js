@@ -451,11 +451,11 @@ document.addEventListener('click', function(event){
       
     };
 });
-function saveFile(data){
+function saveFile(data, name){
     var jsonString = JSON.stringify(data);
     $.ajax({
         url: 'php/save.php',
-        data: {'jsonString':jsonString},
+        data: {name:jsonString},
         type: 'POST'
     });
 }
@@ -476,7 +476,6 @@ function missionsInCounties() {
 
     counties = e.data[0];
     missionsInUk = e.data[1];
-    saveFile(missionsInUk);
     aftr_loadtime = new Date().getTime(); //code to work out total load time (testing)
     pgloadtime = (aftr_loadtime - before_load) / 1000;
     console.log(pgloadtime);
@@ -509,7 +508,8 @@ function missionsInCounties() {
     resetData();
     repopulateMap();
 
-    saveFile(); 
+    saveFile(imageData, "raw");
+    saveFile(counties, "counties"); 
     showRegionHistogram();
   };
  
