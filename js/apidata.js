@@ -1,5 +1,6 @@
 var areaOfUk = 0;
 var areaData = [];
+var startDates = [];
 var imageData = [];
 var layerData =[];
 let map;
@@ -239,8 +240,113 @@ function dataSort() {
         panel.style.maxHeight = panel.scrollHeight +"px";
     }
 }
+function getHistogram1() {
+    // using plot.ly
+    var trace = {
+        histfunc: "sum",
+        x: startDates,
+        y: areaData,
+        type: 'histogram',
+        cumulative:{enabled: true},
+        marker: {
+            color: '#0D3B66'
+        },
+    };
+    var layout = {
+
+        title: {
+            text: 'Area covered per day(Cumalative)',
+            font: {
+                family: 'Courier New, monospace',
+                size: 24
+            },
+        },
+
+        xaxis: {
+            title: {
+                text: 'Mission Date',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+
+        yaxis: {
+            title: {
+                text: 'Area km²',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+
+        plot_bgcolor: '#F95738',
+        paper_bgcolor: '#F95738'
+    };
+
+    Plotly.newPlot('histogramDisplay', [trace], layout)
+        .then(() => {
+            return Plotly.toImage({ setBackground: setBackground })
+        });
+}
 
 function getHistogram() {
+    // using plot.ly
+    var trace = {
+        histfunc: "sum",
+        x: startDates,
+        y: areaData,
+        type: 'histogram',
+        marker: {
+            color: '#0D3B66'
+        },
+    };
+    var layout = {
+        title: {
+            text: 'Area covered per day',
+            font: {
+                family: 'Courier New, monospace',
+                size: 24
+            },
+        },
+
+        xaxis: {
+            title: {
+                text: 'Mission Date',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+
+        yaxis: {
+            title: {
+                text: 'Area km²',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+
+        plot_bgcolor: '#F95738',
+        paper_bgcolor: '#F95738'
+    };
+
+    Plotly.newPlot('histogramDisplay', [trace], layout)
+        .then(() => {
+            return Plotly.toImage({ setBackground: setBackground })
+        });
+}
+
+function getHistogram2() {
     // using plot.ly
     var trace = {
         x: areaData,
