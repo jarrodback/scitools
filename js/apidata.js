@@ -17,6 +17,7 @@ var countiesData;
 var ukbordersData;
 var regionsData;
 var arrcreated = false;
+var missionsLoaded = false;
 
 fetch('data/ukBorders.geojson')
     .then(Response => Response.text())
@@ -58,6 +59,8 @@ function initMap(){
     //   }
         resetData();
         repopulateMap();
+        missionsLoaded = true;
+
     })
     .catch((error)=> {
         console.log(error);
@@ -68,6 +71,7 @@ function initMap(){
                 imageData[x].properties.percentage = (imageData[x].properties.area / areaOfUk ) * 100;
                 addToMap(imageData[x]);
             }
+            missionsLoaded = true;
             document.getElementById('loadingScreen').style.display = "none";
         }, 20000);
     });
