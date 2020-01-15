@@ -137,6 +137,7 @@ function addToMap(data){
             + '<br><a href="#" class="popupSearchPolygonId">Search this ID</a>');
         }
     }).addTo(map);
+    dataSort();
 }
 function repopulateMap(){
     for(var x = 0; x < imageData.length; x++){
@@ -235,9 +236,8 @@ function dataSort() {
         }
         console.log( x + " records processed");
         getHistogram();
+        showCountyHistogram()
         graphClicked = true;
-        var panel = document.getElementsByClassName('panel')[1];
-        panel.style.maxHeight = panel.scrollHeight +"px";
     }
 }
 function getHistogram1() {
@@ -340,10 +340,63 @@ function getHistogram() {
         paper_bgcolor: '#F95738'
     };
 
-    Plotly.newPlot('histogramDisplay', [trace], layout)
-        .then(() => {
-            return Plotly.toImage({ setBackground: setBackground })
-        });
+    Plotly.newPlot('histogramDisplay', [trace], layout);
+}
+
+function showCountyHistogram(){
+    var data;
+    var x = [];
+    var y = [];
+    for(var x1 = 0; x1 < counties.length; x1++)
+    {
+        x[x1] = counties[x1].name;
+        y[x1] = counties[x1].missionsInside;
+    }  
+    var data = [
+        {
+            histfunc: "sum",
+            y: y,
+            x: x,
+            type: "histogram",
+            name: "sum"
+        }
+    ];
+    var layout = {
+
+        plot_bgcolor: '#F95738',
+        paper_bgcolor: '#F95738',
+
+        title: {
+            text: 'Number of missions per county',
+            font: {
+                family: 'Courier New, monospace',
+                size: 24
+            },
+        },
+        xaxis: {
+            title: {
+                text: 'Counties',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+        yaxis: {
+            title: {
+                text: 'Number of Missions',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        }
+    }
+    Plotly.newPlot('countiesHistogram', data, layout);
+    var panel = document.getElementsByClassName('panel')[1];
+    panel.style.maxHeight = panel.scrollHeight +"px"; 
 }
 
 function getHistogram2() {
