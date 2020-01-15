@@ -224,6 +224,8 @@ function dataSort() {
         console.log( x + " records processed");
         getHistogram();
         graphClicked = true;
+        var panel = document.getElementsByClassName('panel')[1];
+        panel.style.maxHeight = panel.scrollHeight +"px";
     }
 }
 
