@@ -6,7 +6,6 @@ let map;
 var markerGroup = L.layerGroup(); 
 var activeSearch = false; 
 var searchQ = [];
-var missionsLoaded = false; 
 var graphClicked = false;
 var counties = [];
 var missionsInUk = [];
@@ -34,11 +33,12 @@ fetch('data/ukBorders.geojson')
     )
 
 fetch('data/ukcounties.geojson').then(Response => Response.text()).then((data) => {
-    regionsData = JSON.parse(data)
+    regionsData = JSON.parse(data);
     for (var i = 0; i < regionsData.features.length; i++) {
         regionsData.features[i].geometry = turf.simplify(turf.cleanCoords(regionsData.features[i].geometry), { tolerance: 0.0001 });
     }
 })
+
 
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 function initMap(){
@@ -47,19 +47,28 @@ function initMap(){
     maxZoom: 9,
     minZoom: 6
   }).addTo(map);
-  addCountiesToMap();
-  getProductGeoJSONPHP();
-  setTimeout(function(){ 
-    for(var x = 0; x < imageData.length; x++){
-        imageData[x].properties.area = (turf.area(turf.polygon(imageData[x].geometry.coordinates))/1000000);
-        imageData[x].properties.percentage = (imageData[x].properties.area / areaOfUk) * 100;
+//   addCountiesToMap();
+  fetch('data/images.json')
+  .then(response => response.text())
+  .then((data) => {
+    imageData = JSON.parse(data);
+        for(var x = 0; x < imageData.length; x++){
+
         addToMap(imageData[x]);
     }
-    document.getElementById('loadingScreen').style.display = "none";
-    console.log("All missions have been added to map");
-    console.log(imageData);
-    missionsLoaded = true; 
-}, 20000);
+    })
+    .catch((error)=> {
+        console.log(error);
+        getProductGeoJSONPHP();
+        setTimeout(function(){
+            for(var x = 0; x < imageData.length; x++){
+                imageData[x].properties.area = (turf.area(turf.polygon(imageData[x].geometry.coordinates))/1000000);
+                imageData[x].properties.percentage = (imageData[x].properties.area / areaOfUk ) * 100;
+                addToMap(imageData[x]);
+            }
+            document.getElementById('loadingScreen').style.display = "none";
+        }, 20000);
+    });
 }
 
 function getAreaColour(feature){
@@ -154,6 +163,8 @@ function getProductSearchPHP(){
 }
 async function getProductGeoJSONPHP(){
     //     //result is api key
+     document.getElementById('loadingScreen').style.display = "block";
+
          getProductSearchPHP().then(function(idarray){
             //idarray is array of ids
             var json = JSON.parse(idarray);
@@ -551,11 +562,19 @@ function missionsInCounties() {           //Function that calculates the percent
         addToMap(missionsInUk[i]);
         imageData = missionsInUk;
         console.log("new imagedata : " + missionsInUk);
+        saveFile(imageData);
     }
 }
 
 
-
+function saveFile(data){
+    var jsonString = JSON.stringify(data);
+    $.ajax({
+        url: 'php/save.php',
+        data: {'jsonString':jsonString},
+        type: 'POST'
+    });
+}
 
 
 
