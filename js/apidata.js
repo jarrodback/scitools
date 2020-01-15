@@ -1,12 +1,12 @@
 var areaOfUk = 0;
 var areaData = [];
+var startDates = [];
 var imageData = [];
 var layerData =[];
 let map;
 var markerGroup = L.layerGroup(); 
 var activeSearch = false; 
 var searchQ = [];
-var missionsLoaded = false; 
 var graphClicked = false;
 var counties = [];
 var missionsInUk = [];
@@ -34,11 +34,12 @@ fetch('data/ukBorders.geojson')
     )
 
 fetch('data/ukcounties.geojson').then(Response => Response.text()).then((data) => {
-    regionsData = JSON.parse(data)
+    regionsData = JSON.parse(data);
     for (var i = 0; i < regionsData.features.length; i++) {
         regionsData.features[i].geometry = turf.simplify(turf.cleanCoords(regionsData.features[i].geometry), { tolerance: 0.0001 });
     }
 })
+
 
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 function initMap(){
@@ -47,21 +48,41 @@ function initMap(){
     maxZoom: 9,
     minZoom: 6
   }).addTo(map);
-  addCountiesToMap();
-  getProductGeoJSONPHP();
-  setTimeout(function(){ 
-    for(var x = 0; x < imageData.length; x++){
-        imageData[x].properties.area = (turf.area(turf.polygon(imageData[x].geometry.coordinates))/1000000);
-        imageData[x].properties.percentage = (imageData[x].properties.area / areaOfUk) * 100;
+//   addCountiesToMap();
+  fetch('data/images.json')
+  .then(response => response.text())
+  .then((data) => {
+    imageData = JSON.parse(data);
+        for(var x = 0; x < imageData.length; x++){
+
         addToMap(imageData[x]);
     }
-    document.getElementById('loadingScreen').style.display = "none";
-    console.log("All missions have been added to map");
-    console.log(imageData);
-    missionsLoaded = true; 
-}, 20000);
+    })
+    .catch((error)=> {
+        console.log(error);
+        getProductGeoJSONPHP();
+        setTimeout(function(){
+            for(var x = 0; x < imageData.length; x++){
+                imageData[x].properties.area = (turf.area(turf.polygon(imageData[x].geometry.coordinates))/1000000);
+                imageData[x].properties.percentage = (imageData[x].properties.area / areaOfUk ) * 100;
+                addToMap(imageData[x]);
+            }
+            document.getElementById('loadingScreen').style.display = "none";
+        }, 20000);
+    });
 }
-
+function getNewData(){
+    imageData = [];
+    getProductGeoJSONPHP();
+    setTimeout(function(){
+        for(var x = 0; x < imageData.length; x++){
+            imageData[x].properties.area = (turf.area(turf.polygon(imageData[x].geometry.coordinates))/1000000);
+            imageData[x].properties.percentage = (imageData[x].properties.area / areaOfUk ) * 100;
+            addToMap(imageData[x]);
+        }
+        document.getElementById('loadingScreen').style.display = "none";
+    }, 20000);
+}
 function getAreaColour(feature){
     if(feature.properties.area < 100){
         return {fillColor: '#FED976', color: '#FED976'};
@@ -116,6 +137,7 @@ function addToMap(data){
             + '<br><a href="#" class="popupSearchPolygonId">Search this ID</a>');
         }
     }).addTo(map);
+    dataSort();
 }
 function repopulateMap(){
     for(var x = 0; x < imageData.length; x++){
@@ -154,6 +176,8 @@ function getProductSearchPHP(){
 }
 async function getProductGeoJSONPHP(){
     //     //result is api key
+     document.getElementById('loadingScreen').style.display = "block";
+
          getProductSearchPHP().then(function(idarray){
             //idarray is array of ids
             var json = JSON.parse(idarray);
@@ -209,11 +233,66 @@ function dataSort() {
     if (graphClicked == false) {
         for (var x = 0; x < imageData.length; x++) {
             areaData.push(imageData[x].properties.area, imageData[x].properties.missionid);
+            startDates.push(imageData[x].properties.startdate);
         }
         console.log( x + " records processed");
         getHistogram();
+        showCountyHistogram()
         graphClicked = true;
     }
+}
+function getHistogram1() {
+    // using plot.ly
+    var trace = {
+        histfunc: "sum",
+        x: startDates,
+        y: areaData,
+        type: 'histogram',
+        cumulative:{enabled: true},
+        marker: {
+            color: '#0D3B66'
+        },
+    };
+    var layout = {
+
+        title: {
+            text: 'Area covered per day(Cumalative)',
+            font: {
+                family: 'Courier New, monospace',
+                size: 24
+            },
+        },
+
+        xaxis: {
+            title: {
+                text: 'Mission Date',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+
+        yaxis: {
+            title: {
+                text: 'Area km²',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+
+        plot_bgcolor: '#F95738',
+        paper_bgcolor: '#F95738'
+    };
+
+    Plotly.newPlot('histogramDisplay', [trace], layout)
+        .then(() => {
+            return Plotly.toImage({ setBackground: setBackground })
+        });
 }
 
 function getHistogram() {
@@ -460,7 +539,7 @@ function getMissionById(id){
     document.getElementById('metaMissionID').innerHTML = '<b>Current Mission ID</b>: ' + currentMission.properties.missionid;
     document.getElementById('metaTotalArea').innerHTML = '<b>Total Mission Area</b>: ' + areaTotal + "km²";
     document.getElementById('metaAreaCovered').innerHTML = '<b>Mission UK Coverage</b>: ' + ((areaTotal/areaOfUk)*100).toFixed(6) + '%';
-    document.getElementById('metaDateCreated').innerHTML = '<b>Date Created</b>: ' + currentMission.properties.datecreated;
+    document.getElementById('metaDateCreated').innerHTML = '<b>Mission Start Date</b>: ' + currentMission.properties.startdate; 
     //display ammount of results found from search
     if(searchQ.length > 1) document.getElementById("results").innerHTML = "&#8618; " + searchQ.length + " Results found";
     else document.getElementById("results").innerHTML = "&#8618; " + searchQ.length + " Result found";      
@@ -528,7 +607,7 @@ function searchPolygonID(id){
     metaText[0].innerHTML = '<b>Polygon ID</b>: ' + currPoly.properties.id; 
     metaText[1].innerHTML = '<b>Polygon UK Coverage</b>: ' + currPoly.properties.percentage.toFixed(6) + '%';; 
     metaText[2].innerHTML = '<b>Polygon Area</b>: ' + currPoly.properties.area; 
-    metaText[3].innerHTML = '<b>Date Created</b>: ' + currPoly.properties.datecreated; 
+    metaText[3].innerHTML = '<b>Mission Start Date</b>: ' + currPoly.properties.startdate; 
 };
 
 function resetData(){
@@ -587,7 +666,7 @@ document.addEventListener('click', function(event){
                         polyMeta[0].innerHTML = '<b>Selected Polygon ID</b>: ' + geoJSONdata.properties.id; 
                         polyMeta[1].innerHTML = '<b>Polygon UK Coverage</b>: ' + geoJSONdata.properties.percentage.toFixed(6) + '%';
                         polyMeta[2].innerHTML = '<b>Polygon Area</b>: ' + geoJSONdata.properties.area.toFixed(2) + 'km²'; 
-                        polyMeta[3].innerHTML = '<b>Date Created</b>: ' + geoJSONdata.properties.datecreated; 
+                        polyMeta[3].innerHTML = '<b>Mission Start Date</b>: ' + geoJSONdata.properties.startdate; 
                     }); 
                     //add markers to polygon target
                     marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
@@ -676,11 +755,19 @@ function missionsInCounties() {           //Function that calculates the percent
         addToMap(missionsInUk[i]);
         imageData = missionsInUk;
         console.log("new imagedata : " + missionsInUk);
+        saveFile(imageData);
     }
 }
 
 
-
+function saveFile(data){
+    var jsonString = JSON.stringify(data);
+    $.ajax({
+        url: 'php/save.php',
+        data: {'jsonString':jsonString},
+        type: 'POST'
+    });
+}
 
 
 

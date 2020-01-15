@@ -24,11 +24,7 @@
      crossorigin="">
      </script>
      <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
-     <script
-			  src="https://code.jquery.com/jquery-3.4.1.slim.js"
-			  integrity="sha256-BTlTdQO9/fascB1drekrDVkaKd9PkwBymMlHOiG+qLI="
-			  crossorigin="anonymous"></script>
-		
+     <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="  crossorigin="anonymous"></script>
   </head>
   <body>
     <div id="loadingScreen" class="loadingScreen">
@@ -44,7 +40,9 @@
         </div>
         <div id="mainSideBarContent">
       <h1>SCi-Toolset Coverage of Data</h1>
-      <button onclick="missionsInCounties()">Click For A Crash</button>
+      <button onclick="missionsInCounties()">Calculate polygons over UK</button>
+      <button onclick="getNewData()">Update Data</button>
+
       <div id = "searchBar">
         <h2>Search for a Mission</h2>
         <input  id = "searchbar" onkeypress="mySearchFunction(event)" type="search" class="missionSearch" placeholder="Enter MissionID..."/>
@@ -72,7 +70,7 @@
           <p id="metaTotalArea"  class="metaTag"></p>
           <p id="metaDateCreated" class="metaTag"></p>
           <h2 class="accordion" id="results">&#8618; 0 Result Found </h2> 
-          <table cellspacing="2" cellpadding="0" border='2' id="polyIDtable" hidden="true">
+          <table cellspacing="2" cellpadding="0" id="polyIDtable" hidden="true">
           <tbody>
           <tr><td>Polygon ID's</td></tr>
           </tbody>
@@ -87,7 +85,7 @@
       <div id="histogram"><h2 class="accordion">Histogram</h2>
         <div class="panel">
         <div id="histogramDisplay"></div>
-        <button onclick="dataSort()">Mission Size Graph</button>
+        <div id="countiesHistogram"></div>
       </div>
       </div>
     </div>
