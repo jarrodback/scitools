@@ -10,6 +10,8 @@ function dataSort() {
             startDates.push(imageData[x].properties.startdate);
         }
         console.log( x + " records processed");
+        getHistogram();
+        getHistogram1();
         getHistogram2();
         graphClicked = true;
         var panel = document.getElementsByClassName('panel')[1];
@@ -137,7 +139,7 @@ function getHistogram1() {
         paper_bgcolor: '#F95738'
     };
 
-    Plotly.newPlot('histogramDisplay', [trace], layout);
+    Plotly.newPlot('areaGraph', [trace], layout);
 }
 
 function getHistogram() {
@@ -186,7 +188,7 @@ function getHistogram() {
         paper_bgcolor: '#F95738'
     };
 
-    Plotly.newPlot('histogramDisplay', [trace], layout);
+    Plotly.newPlot('closestGraph', [trace], layout);
 }
 
 function getHistogram2() {
@@ -234,7 +236,7 @@ function getHistogram2() {
         paper_bgcolor: '#F95738'
         };
   
-    Plotly.newPlot('histogramDisplay', [trace], layout);
+    Plotly.newPlot('missionGraph', [trace], layout);
     
 
     myPlot.on('plotly_click', function(data){
