@@ -10,6 +10,8 @@ function dataSort() {
             startDates.push(imageData[x].properties.startdate);
         }
         console.log( x + " records processed");
+        getHistogram();
+        getHistogram1();
         getHistogram2();
         graphClicked = true;
         var panel = document.getElementsByClassName('panel')[1];
@@ -18,13 +20,16 @@ function dataSort() {
     // overwriting the values in array if button is repressed, this is to stop the data duplicating
     else
         {
-        for (var x = 0; x < imageData.length; x++){
+        for (var x = 0; x < imageData.length; x= x+2){
             areaData[x] = imageData[x].properties.area;
+        }
+        for (var x = 0; x < imageData.length; x++){
             startDates[x] = imageData[x].properties.startdate;
         }
-        for (var y = 0; y < imageData.length; y++){
-                areaData[x][y] = imageData[y].properties.missionid;
-        }  
+        x = 0;
+         for (var y = 1; y < imageData.length; y = y+2){
+                 areaData[y] = imageData[y].properties.missionid;
+         }  
         getHistogram2();      
     }
 }
@@ -134,7 +139,7 @@ function getHistogram1() {
         paper_bgcolor: '#F95738'
     };
 
-    Plotly.newPlot('histogramDisplay', [trace], layout);
+    Plotly.newPlot('areaGraph', [trace], layout);
 }
 
 function getHistogram() {
@@ -183,7 +188,7 @@ function getHistogram() {
         paper_bgcolor: '#F95738'
     };
 
-    Plotly.newPlot('histogramDisplay', [trace], layout);
+    Plotly.newPlot('closestGraph', [trace], layout);
 }
 
 function getHistogram2() {
@@ -232,7 +237,7 @@ function getHistogram2() {
         paper_bgcolor: '#F95738'
         };
   
-    Plotly.newPlot('histogramDisplay', [trace], layout);
+    Plotly.newPlot('missionGraph', [trace], layout);
     
 
     myPlot.on('plotly_click', function(data){

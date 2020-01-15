@@ -18,6 +18,8 @@ var ukbordersData;
 var regionsData;
 var arrcreated = false;
 var missionsLoaded = false;
+var totalAreaCoveredUK = 0;
+var ukAreaCovered = 0;
 
 fetch('data/ukBorders.geojson')
     .then(Response => Response.text())
@@ -65,7 +67,6 @@ function initMap(){
     maxZoom: 9,
     minZoom: 6
   }).addTo(map);
-  addCountiesToMap();
   fetch("data/images.json")
     .then(response => response.text())
     .then(data => {
@@ -477,7 +478,14 @@ function saveFile(data){
         type: 'POST'
     });
 }
-
+function saveCounties(data){
+    var counties = JSON.stringify(data);
+    $.ajax({
+        url: 'php/savecounties.php',
+        data: {'counties':counties},
+        type: 'POST'
+    });
+}
 function missionsInCounties() {
   //Function that calculates the percentage of missions inside of a county divided by the total amount of missions
   var worker = new Worker("js/worker.js");
@@ -494,7 +502,7 @@ function missionsInCounties() {
 
     counties = e.data[0];
     missionsInUk = e.data[1];
-    saveFile(missionsInUk);
+
     aftr_loadtime = new Date().getTime(); //code to work out total load time (testing)
     pgloadtime = (aftr_loadtime - before_load) / 1000;
     console.log(pgloadtime);
@@ -520,14 +528,31 @@ function missionsInCounties() {
         }
       }
     }
-
+    for (var i = 0; i < missionsInUk.length; i++){
+        totalAreaCoveredUK += turf.area(missionsInUk[i])/1000000;
+        for (var j = 0; j < missionsInUk.length; j++){
+            if (i == j){
+                j++;
+            }
+            if (j == missionsInUk.length){
+                break;
+            }
+            var tempcheck = turf.intersect(missionsInUk[i], missionsInUk[j])
+            if (tempcheck != undefined){
+                totalAreaCoveredUK = totalAreaCoveredUK - turf.area(tempcheck)/1000000;
+            }
+        }
+    }
+    ukAreaCovered = parseFloat((totalAreaCoveredUK/areaOfUk)*100).toFixed(2);
+    console.log(ukAreaCovered + "% of the UK is covered"); 
     imageData = [];
     imageData = missionsInUk;
 
     resetData();
     repopulateMap();
 
-    saveFile(); 
+    saveFile(imageData);
+    saveCounties(counties); 
     showRegionHistogram();
   };
  
