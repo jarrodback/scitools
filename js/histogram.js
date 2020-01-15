@@ -1,13 +1,16 @@
 ///////////////////HISTOGRAM///////////////////
+var testData = [];
 function dataSort() {
     // storing mission area into array
     if (graphClicked == false) {
         for (var x = 0; x < imageData.length; x++) {
             areaData.push(imageData[x].properties.area, imageData[x].properties.missionid);
+            testData.push(imageData[x].properties.area);
+            testData.sort(function(a,b){return a-b});
             startDates.push(imageData[x].properties.startdate);
         }
         console.log( x + " records processed");
-        getHistogram();
+        getHistogram2();
         graphClicked = true;
         var panel = document.getElementsByClassName('panel')[1];
         panel.style.maxHeight = panel.scrollHeight +"px";
@@ -22,7 +25,7 @@ function dataSort() {
         for (var y = 0; y < imageData.length; y++){
                 areaData[x][y] = imageData[y].properties.missionid;
         }  
-        getHistogram();      
+        getHistogram2();      
     }
 }
 function getHistogram1() {
@@ -136,6 +139,7 @@ function getHistogram2() {
     var trace = {
         x: areaData,
         type: 'histogram',
+        hoverinfo: 'y + x',
         marker: {
             color: '#0D3B66'
         },
@@ -151,6 +155,7 @@ function getHistogram2() {
 
         xaxis: {
             title: {
+                type: 'linear',
                 rangemode: 'tozero',
                 text: 'Area km²',
                 font: {
