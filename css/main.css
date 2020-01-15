@@ -273,19 +273,3 @@ input[type=search]:focus {
   background-color: rgba(255, 255, 255, 1);
 }
 
-
-button{
-  padding: 10px 20px 10px 20px;
-  color: #000;
-  font-weight: bold;
-  position: relative;
-  display: inline-block;
-  background-color: #CCC;
-  border-bottom: none;
-  text-align: center;
-}
-
-button:hover{
-  cursor: pointer;
-  background-color: #FFAAAA;
-}
