@@ -1,13 +1,16 @@
 ///////////////////HISTOGRAM///////////////////
+var testData = [];
 function dataSort() {
     // storing mission area into array
     if (graphClicked == false) {
         for (var x = 0; x < imageData.length; x++) {
             areaData.push(imageData[x].properties.area, imageData[x].properties.missionid);
+            testData.push(imageData[x].properties.area);
+            testData.sort(function(a,b){return a-b});
             startDates.push(imageData[x].properties.startdate);
         }
         console.log( x + " records processed");
-        getHistogram();
+        getHistogram2();
         graphClicked = true;
         var panel = document.getElementsByClassName('panel')[1];
         panel.style.maxHeight = panel.scrollHeight +"px";
@@ -22,7 +25,7 @@ function dataSort() {
         for (var y = 0; y < imageData.length; y++){
                 areaData[x][y] = imageData[y].properties.missionid;
         }  
-        getHistogram();      
+        getHistogram2();      
     }
 }
 function getHistogram1() {
@@ -136,6 +139,7 @@ function getHistogram2() {
     var trace = {
         x: areaData,
         type: 'histogram',
+        hoverinfo: 'y + x',
         marker: {
             color: '#0D3B66'
         },
@@ -151,6 +155,7 @@ function getHistogram2() {
 
         xaxis: {
             title: {
+                type: 'linear',
                 rangemode: 'tozero',
                 text: 'Area km²',
                 font: {
@@ -184,58 +189,3 @@ function getHistogram2() {
 
 //Add More histograms here !!
 
-function showRegionHistogram(){
-    var data;
-    var x = [];
-    var y = [];
-    for(var x1 = 0; x1 < counties.length; x1++)
-    {
-        x[x1] = counties[x1].name;
-        y[x1] = counties[x1].missionsInside;
-    }  
-    var data = [
-        {
-            histfunc: "sum",
-            y: y,
-            x: x,
-            type: "histogram",
-            name: "sum"
-        }
-    ];
-    var layout = {
-
-        plot_bgcolor: '#F95738',
-        paper_bgcolor: '#F95738',
-
-        title: {
-            text: 'Number of missions per county',
-            font: {
-                family: 'Courier New, monospace',
-                size: 24
-            },
-        },
-        xaxis: {
-            title: {
-                text: 'Counties',
-                font: {
-                    family: 'Courier New, monospace',
-                    size: 18,
-                    color: '#000000'
-                }
-            },
-        },
-        yaxis: {
-            title: {
-                text: 'Number of Missions',
-                font: {
-                    family: 'Courier New, monospace',
-                    size: 18,
-                    color: '#000000'
-                }
-            },
-        }
-    }
-    Plotly.newPlot('countiesHistogram', data, layout);
-    var panel = document.getElementsByClassName('panel')[1];
-    panel.style.maxHeight = panel.scrollHeight +"px"; 
-}
