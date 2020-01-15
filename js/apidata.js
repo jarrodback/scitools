@@ -60,6 +60,7 @@ function initMap(){
         resetData();
         repopulateMap();
         missionsLoaded = true;
+        console.log(L.layerGroup());
 
     })
     .catch((error)=> {
@@ -233,7 +234,10 @@ function getProductFromImageData(id, callback){
         }
     }
 }
- 
+///////////////////HISTOGRAM///////////////////
+
+
+
 ///////////////////SEARCH BAR///////////////////
 function getMissionType(id){
     //check if the page is loading 
@@ -264,6 +268,8 @@ function getMissionType(id){
     } 
     if(missionIDfound) getMissionById(searchQ);  
 };
+///////////////////HISTOGRAM///////////////////
+//in histogram.js
 
 function getMissionById(id){
     //remove all map layers and add back counties 
@@ -445,11 +451,11 @@ document.addEventListener('click', function(event){
       
     };
 });
-function saveFile(data){
+function saveFile(data, name){
     var jsonString = JSON.stringify(data);
     $.ajax({
         url: 'php/save.php',
-        data: {'jsonString':jsonString},
+        data: {name:jsonString},
         type: 'POST'
     });
 }
@@ -470,7 +476,6 @@ function missionsInCounties() {
 
     counties = e.data[0];
     missionsInUk = e.data[1];
-    saveFile(missionsInUk);
     aftr_loadtime = new Date().getTime(); //code to work out total load time (testing)
     pgloadtime = (aftr_loadtime - before_load) / 1000;
     console.log(pgloadtime);
@@ -503,7 +508,8 @@ function missionsInCounties() {
     resetData();
     repopulateMap();
 
-    saveFile(); 
+    saveFile(imageData, "raw");
+    saveFile(counties, "counties"); 
     showRegionHistogram();
   };
  
@@ -561,4 +567,3 @@ legend.onAdd = function (map) {
     return div;
 };
 legend.addTo(map);
-
