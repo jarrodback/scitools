@@ -820,7 +820,7 @@ function missionsInCounties() {           //Function that calculates the percent
         imageData = missionsInUk;
         console.log("new imagedata : " + missionsInUk);
         saveFile(imageData);
-        showCountyHistogram()
+        showRegionHistogram()
     }
 }
 
@@ -833,16 +833,6 @@ function saveFile(data){
         type: 'POST'
     });
 }
-
-
-
-
-
-
-
-
-
-
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -883,7 +873,7 @@ var legend = L.control({position: 'topright'});
 legend.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'info legend'),
     grades = ['#FED976','#FEB24C','#FC4E2A','#BD0026','#800026'];
-    div.innerHTML += "<h4>Land Coverage (km²)</h4>";
+    div.innerHTML += "<h4>Area Coverage (km²)</h4>";
     div.innerHTML += '<i style="background: #FED976"></i><span><100</span><br>';
     div.innerHTML += '<i style="background: #FEB24C"></i><span>100-199</span><br>';
     div.innerHTML += '<i style="background: #FC4E2A"></i><span>200-299</span><br>';
