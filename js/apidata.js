@@ -229,15 +229,47 @@ function getHistogram() {
         type: 'histogram',
         marker: {
             color: '#0D3B66'
-        }
+        },
     };
-    Plotly.newPlot('histogramDisplay', [trace], {
+    var layout = {
+        title: {
+            text: 'Area of Missions',
+            font: {
+                family: 'Courier New, monospace',
+                size: 24
+            },
+        },
+
+        xaxis: {
+            title: {
+                text: 'Area km²',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+
+        yaxis: {
+            title: {
+                text: 'Number of Missions',
+                font: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#000000'
+                }
+            },
+        },
+
         plot_bgcolor: '#F95738',
-        paper_bgcolor: '#F95738',
-      })
-      .then(() => {
-        return Plotly.toImage({setBackground: setBackground})
-      });
+        paper_bgcolor: '#F95738'
+    };
+
+    Plotly.newPlot('histogramDisplay', [trace], layout)
+        .then(() => {
+            return Plotly.toImage({ setBackground: setBackground })
+        });
 }
 ///////////////////SEARCH BAR///////////////////
 function getMissionType(id){
