@@ -509,17 +509,13 @@ function missionsInCounties() {
     resetData();
     repopulateMap();
 
-    saveFile();
+    saveFile(); 
+    showRegionHistogram();
   };
  
   document.getElementById("loadingScreen").style.display = "none";
 
 }
-
-
-
-
-
 
 
 function sleep(ms) {
