@@ -18,13 +18,16 @@ function dataSort() {
     // overwriting the values in array if button is repressed, this is to stop the data duplicating
     else
         {
-        for (var x = 0; x < imageData.length; x++){
+        for (var x = 0; x < imageData.length; x= x+2){
             areaData[x] = imageData[x].properties.area;
+        }
+        for (var x = 0; x < imageData.length; x++){
             startDates[x] = imageData[x].properties.startdate;
         }
-        for (var y = 0; y < imageData.length; y++){
-                areaData[x][y] = imageData[y].properties.missionid;
-        }  
+        x = 0;
+         for (var y = 1; y < imageData.length; y = y+2){
+                 areaData[y] = imageData[y].properties.missionid;
+         }  
         getHistogram2();      
     }
 }
