@@ -193,15 +193,14 @@ function getHistogram() {
 
 function getHistogram2() {
     // using plot.ly
-    var myPlot = document.getElementById('histogramDisplay'),
-        trace = {
+        var trace = {
             x: areaData,
             type: 'histogram',
             marker: {
                 color: '#0D3B66'
             }, 
-        },
-        layout = {
+        };
+        var layout = {
             title: {
               text: 'Area of Missions',
               font: {
@@ -237,7 +236,6 @@ function getHistogram2() {
         };
   
     Plotly.newPlot('missionGraph', [trace], layout);
-    
 
     myPlot.on('plotly_click', function(data){
         var pts = '';
