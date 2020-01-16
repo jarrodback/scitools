@@ -23,7 +23,7 @@ onmessage = function (e) {
 
             for (var p = 0, size = countiesData[o].geometry.coordinates.length; p < size; p++) {
 
-                var currentSegement = turf.polygon(countiesData[o].geometry.coordinates[p]);
+                var currentSegement = turf.polygon(countiesData[o].geometry.coordinates[p]).geometry;
                 var intersectarea = turf.intersect(currentSegement, missionGeoJSON);
 
                 if (intersectarea != undefined) {

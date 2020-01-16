@@ -69,11 +69,11 @@ function loadGlobalMeta(){
         globalCoverage += imageDataU[x].properties.percentage; 
     } 
 
-    globalCoverage = globalCoverage.toFixed(4)+'%';
+    globalCoverage = globalCoverage +'%';
     document.getElementById('globalData').hidden = false; 
     document.getElementById('globalArea').visible = true; 
     document.getElementById('globalCoverage').visible = true; 
-    document.getElementById('globalArea').innerHTML = 'Global Polygon Area: ' + globalArea.toFixed(2) + 'km²';
+    document.getElementById('globalArea').innerHTML = 'Global Polygon Area: ' + globalArea + 'km²';
     document.getElementById('globalCoverage').innerHTML = 'Global UK Coverage: ' + globalCoverage; 
 }
 
