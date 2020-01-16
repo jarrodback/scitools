@@ -84,14 +84,13 @@ function loadGlobalMeta() {
     globalCoverage += imageDataU[x].properties.percentage;
   }
 
-  globalCoverage = globalCoverage + "%";
   document.getElementsByClassName("globalData").hidden = false;
   document.getElementById("globalArea").visible = true;
   document.getElementById("globalCoverage").visible = true;
   document.getElementById("globalArea").innerHTML =
-    "Global Polygon Area: " + globalArea + "km²";
+    "Global Polygon Area: " + parseFloat(globalArea.toFixed(2)) + "km²";
   document.getElementById("globalCoverage").innerHTML =
-    "Global UK Coverage: " + globalCoverage;
+    "Global UK Coverage: " + parseFloat(globalCoverage.toFixed(2)) + "%";
 }
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 //Initalise the map and add data from file or api 
@@ -401,7 +400,7 @@ function getMissionById(id) {
     "<b>Total Mission Area</b>: " + areaTotal + "km²";
   document.getElementById("metaAreaCovered").innerHTML =
     "<b>Mission UK Coverage</b>: " +
-    ((areaTotal / areaOfUk) * 100).toFixed(6) +
+    ((areaTotal / areaOfUk) * 100).toFixed(2) +
     "%";
   document.getElementById("metaDateCreated").innerHTML =
     "<b>Mission Start Date</b>: " + currentMission.properties.startdate;
