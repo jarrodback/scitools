@@ -90,9 +90,10 @@ function showRegionHistogram(){
     panel.style.maxHeight = panel.scrollHeight +"px"; 
 }
 
-
+//covered per day (cumalative)
 function getHistogram1() {
     // using plot.ly
+    removeDups();
     var trace = {
         histfunc: "sum",
         x: startDates,
@@ -142,8 +143,10 @@ function getHistogram1() {
     Plotly.newPlot('areaGraph', [trace], layout);
 }
 
+//covered per day
 function getHistogram() {
     // using plot.ly
+    removeDups();
     var trace = {
         histfunc: "sum",
         x: startDates,
@@ -191,8 +194,11 @@ function getHistogram() {
     Plotly.newPlot('closestGraph', [trace], layout);
 }
 
+//area of missions
 function getHistogram2() {
     // using plot.ly
+    //remove duplicates from areaData
+
     var myPlot = document.getElementById('missionGraph')
         var trace = {
             x: areaData,
@@ -239,6 +245,10 @@ function getHistogram2() {
   
     Plotly.newPlot('missionGraph', [trace], layout);
 
+
+    
+    //SAM - I'll try and get this working but i'm not promising anything 
+    /*
     myPlot.on('plotly_click', function(data){
         var pts = '';
         //gets point clicked on histogram
@@ -255,6 +265,7 @@ function getHistogram2() {
                     searchQdata.push(geoJSONdata);
                 });
             } 
+            
             //set search range
             var lowRange = null;
             var highRange = null;
@@ -291,7 +302,7 @@ function getHistogram2() {
                     break;
                 }
                 case 300: {
-                    lowRange = 300;
+                    lowRange = 250;
                     highRange = 350;
                     break;
                 }
@@ -312,7 +323,7 @@ function getHistogram2() {
                 }
                 case 500: {
                     lowRange = 500;
-                    highRange = null;
+                    highRange = 1000;
                     break;
                 }
             }
@@ -326,9 +337,9 @@ function getHistogram2() {
                 if(searchQdata[x].properties.area > lowRange && searchQdata[x].properties.area < highRange){
                     console.log(searchQdata[x]);
                     console.log('high range: ' + highRange + ' low range: ' + lowRange);
-                    //add marker 
-                    var mapLocation = searchQdata[x].properties.centre.split(",");
-                    marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
+                    //add marker
+                    var mapLocation = turf.centroid(searchQdata[x]);
+                    marker = L.marker({lng: mapLocation.geometry.coordinates[0], lat: mapLocation.geometry.coordinates[1]});
                     marker.addTo(markerGroup);
                     marker.addTo(map);
                 }
@@ -337,6 +348,7 @@ function getHistogram2() {
         }
 
     });
+    */
 }
 function missionSearchHistogram(searchQ){
     areaData = [];
@@ -348,7 +360,25 @@ function missionSearchHistogram(searchQ){
     console.log(areaData);
     activeSearch = true; 
     getHistogram2(); 
-}; 
+    getHistogram();
+    getHistogram1();
+};
+
+
+function removeDups(){
+    var UniqueArea = []; 
+    for(var x = 0; x < areaData.length; x++){
+        var dupFound = false; 
+        var toPush = areaData[x]; 
+        for(var p = 0; p < UniqueArea.length; p++){
+            if(toPush == UniqueArea[p]){
+                dupFound = true; 
+            }
+        }
+        if(!dupFound) UniqueArea.push(toPush); 
+    }
+    areaData = UniqueArea; 
+};
 
 
 
