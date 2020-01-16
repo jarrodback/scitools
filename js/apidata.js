@@ -70,10 +70,10 @@ function loadGlobalMeta(){
     } 
 
     globalCoverage = globalCoverage.toFixed(4)+'%';
-    document.getElementById('globalData').hidden = false; 
+    document.getElementsByClassName('globalData').hidden = false; 
     document.getElementById('globalArea').visible = true; 
     document.getElementById('globalCoverage').visible = true; 
-    document.getElementById('globalArea').innerHTML = 'Global Polygon Area: ' + globalArea.toFixed(2) + 'km²';
+    document.getElementById('globalArea').innerHTML = 'Global Polygon Area: ' + globalArea + 'km²';
     document.getElementById('globalCoverage').innerHTML = 'Global UK Coverage: ' + globalCoverage; 
 }
 
