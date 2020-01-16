@@ -3,8 +3,8 @@ var testData = [];
 function dataSort() {
     // storing mission area into array
     if (graphClicked == false) {
-        for (var x = 0; x < imageData.length; x++) {
-            areaData.push(imageData[x].properties.area, imageData[x].properties.missionid);
+        for (var x = 0; x < (imageData.length); x++) {
+            areaData.push(imageData[x].properties.area);
             testData.push(imageData[x].properties.area);
             testData.sort(function(a,b){return a-b});
             startDates.push(imageData[x].properties.startdate);
@@ -101,7 +101,11 @@ function getHistogram1() {
         type: 'histogram',
         cumulative:{enabled: true},
         marker: {
-            color: '#0D3B66'
+            color: '#0D3B66', 
+            line: {
+            color:  "#ffffff", 
+            width: 1
+            }
         },
     };
     var layout = {
@@ -204,8 +208,12 @@ function getHistogram2() {
             x: areaData,
             type: 'histogram',
             marker: {
-                color: '#0D3B66'
-            }, 
+                color: '#0D3B66',
+            line: {
+            color:  "#ffffff", 
+            width: 1
+            },
+            } 
         };
         var layout = {
             title: {
