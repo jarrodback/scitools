@@ -510,7 +510,7 @@ document.addEventListener('click', function (event) {
                     marker.addTo(markerGroup);
                     marker.addTo(map);
                 });
-                var panel = document.getElementsByClassName('panel')[0];
+                var panel = document.getElementsByClassName('panel')[1];
                 panel.style.maxHeight = panel.scrollHeight + "px";
             };
         }
@@ -645,7 +645,7 @@ map.on('popupopen', function (feature) {
     var i;
     for (i = 0; i < acc.length; i++) {
         acc[i].addEventListener("click", function () {
-            var panel = document.getElementsByClassName('panel')[0];
+            var panel = document.getElementsByClassName('panel')[1];
             panel.style.maxHeight = panel.scrollHeight + "px";
         });
     }
@@ -653,7 +653,7 @@ map.on('popupopen', function (feature) {
     var i2;
     for (i2 = 0; i2 < acc.length; i2++) {
         acc1[i2].addEventListener("click", function () {
-            var panel = document.getElementsByClassName('panel')[0];
+            var panel = document.getElementsByClassName('panel')[1];
             panel.style.maxHeight = panel.scrollHeight + "px";
         });
     }

@@ -51,13 +51,13 @@ var i;
 for(i = 0; i< acc.length;i++){
     if(i == 0){
     acc[i].addEventListener("click", function(){
-        var panel = document.getElementsByClassName('panel')[0];
+        var panel = document.getElementsByClassName('panel')[1];
         panel.style.maxHeight = null;
     });
 }
 else{
     acc[i].addEventListener("click", function(){
-        var panel = document.getElementsByClassName('panel')[1];
+        var panel = document.getElementsByClassName('panel')[2];
         panel.style.maxHeight = null;
     });
 }
@@ -67,7 +67,7 @@ var acc = document.getElementsByClassName("missionSearch");
 var i;
 for(i = 0; i< acc.length;i++){
     acc[i].addEventListener("search", function(){
-        var panel = document.getElementsByClassName('panel')[0];
+        var panel = document.getElementsByClassName('panel')[1];
         panel.style.maxHeight = panel.scrollHeight +"px";
     });
 }
