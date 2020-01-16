@@ -363,7 +363,7 @@ function getMissionById(id) {
 
   for (var x = 0; x < searchQ.length; x++) {
     getProductFromImageData(searchQ[x], function(geoJSONdata) {
-      //add geoJSONdata to the map
+      //add geoJSONdata to the maps
       addToMap(geoJSONdata);
       //add marker to center of polygon
       //var mapLocation = geoJSONdata.properties.centre.split(",");
