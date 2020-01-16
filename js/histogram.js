@@ -107,7 +107,7 @@ function getHistogram1() {
     var layout = {
 
         title: {
-            text: 'Area covered per day(Cumalative)',
+            text: 'Area covered per day(Cumulative)',
             font: {
                 family: 'Courier New, monospace',
                 size: 24
