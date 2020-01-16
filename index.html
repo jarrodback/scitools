@@ -45,12 +45,24 @@
       <h1>SCi-Toolset coverage of data</h1>
       <div id="functionButtons">
         <button onclick="missionsInCounties()">Calculate polygons over UK</button>
-        <button onclick="getNewData()">Update data</button>
-      </div>
-      <div id="searchBar">
-        <h2>Search for a mission</h2>
-        <input id="searchbar" onkeypress="mySearchFunction(event)" type="search" class="missionSearch" placeholder="Enter MissionID..."
-        />
+        <button onclick="getNewData()">Update Data</button>
+        </div>
+      <div id = "searchBar">
+        <h2>Search for a Mission</h2>
+        <input  id = "searchbar" onkeypress="mySearchFunction(event)" type="search" class="missionSearch" placeholder="Enter MissionID..."/>
+        
+        <input type="image" src="data/filter.png" height="50px" width="50px" id="filter"/>
+        <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Some text in the Modal..</p>
+        </div>
+
+        </div>
+
+
         <script>
           function mySearchFunction(e) {
             var key = event.keyCode;
@@ -71,8 +83,8 @@
         <h2 class="accordion">Search results:</h2>
         <div class="panel" id="metaPanel">
           <h2 class="accordion" hidden="true" id="polyMetadata">&#8618; Global Data: </h2>
-          <p id="globalArea" class="polymetaTag" visible="true"></p>
-          <p id="globalCoverage" class="polymetaTag" visible="true"></p>
+          <p id="globalArea" class="globalData" visible="true"></p>
+          <p id="globalCoverage" class="globalData" visible="true"></p>
           <h2 class="accordion" hidden="true" id="metadata">&#8618; Meta Data: </h2>
           <p id="metaMissionID" class="metaTag" visible="false"></p>
           <p id="metaAreaCovered" class="metaTag"></p>
