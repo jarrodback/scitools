@@ -61,7 +61,6 @@ function loadGlobalMeta() {
         if (!dupFound) imageDataU.push(toPush);
     }
 
-
     var globalArea = 0;
     var globalCoverage = 0;
     for (var x = 0; x < imageDataU.length; x++) {
@@ -69,12 +68,11 @@ function loadGlobalMeta() {
         globalCoverage += imageDataU[x].properties.percentage;
     }
 
-    globalCoverage = globalCoverage+'%';
     document.getElementsByClassName('globalData').hidden = false; 
     document.getElementById('globalArea').visible = true; 
     document.getElementById('globalCoverage').visible = true; 
-    document.getElementById('globalArea').innerHTML = 'Global Polygon Area: ' + globalArea + 'km²';
-    document.getElementById('globalCoverage').innerHTML = 'Global UK Coverage: ' + globalCoverage;
+    document.getElementById('globalArea').innerHTML = 'Global Polygon Area: ' + parseFloat(globalArea.toFixed(2)) + 'km²';
+    document.getElementById('globalCoverage').innerHTML = 'Global UK Coverage: ' + parseFloat(globalCoverage.toFixed(2)) + '%';
 }
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 function initMap() {
@@ -363,7 +361,7 @@ function getMissionById(id) {
     document.getElementById('metadata').hidden = false;
     document.getElementById('metaMissionID').innerHTML = '<b>Current Mission ID</b>: ' + currentMission.properties.missionid;
     document.getElementById('metaTotalArea').innerHTML = '<b>Total Mission Area</b>: ' + areaTotal + "km²";
-    document.getElementById('metaAreaCovered').innerHTML = '<b>Mission UK Coverage</b>: ' + ((areaTotal / areaOfUk) * 100).toFixed(6) + '%';
+    document.getElementById('metaAreaCovered').innerHTML = '<b>Mission UK Coverage</b>: ' + ((areaTotal / areaOfUk) * 100).toFixed(2) + '%';
     document.getElementById('metaDateCreated').innerHTML = '<b>Mission Start Date</b>: ' + currentMission.properties.startdate;
     //display ammount of results found from search
     if (searchQ.length > 1) document.getElementById("results").innerHTML = "&#8618; " + searchQ.length + " Results found";
