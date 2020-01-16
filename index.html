@@ -41,7 +41,7 @@
       </div>
     </div>
     <div id="mainSideBarContent">
-      <h1>SCi-Toolset Data Coverage Visualiser</h1>
+      <h1>SCi-Toolset coverage of data</h1>
       <div id="functionButtons">
         <button onclick="missionsInCounties()">Calculate polygons over UK</button>
         <button onclick="getNewData()">Update Data</button>
@@ -55,8 +55,10 @@
         <h2 class="accordion">Filters:</h2>
         <div class="panel" id="filterPanel" visible="false">
         <p>Land Coverage Range:</p>
-        <p id="currentRange"></p>
+        <div class="rangeKilo">
         <input type="range" min="1" max="600" value="600" class="slider" id="myRange">
+        <p id="currentRange"></p>
+      </div>
         </div>
         </div>
 

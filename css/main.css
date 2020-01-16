@@ -307,7 +307,7 @@ input[type=search]:focus {
 .slider {
   -webkit-appearance: none;  /* Override default CSS styles */
   appearance: none;
-  width: 100%; /* Full-width */
+  width: 80%; /* Full-width */
   height: 25px; /* Specified height */
   background: #d3d3d3; /* Grey background */
   outline: none; /* Remove outline */
@@ -351,5 +351,11 @@ button:hover{
 }
 
 #currentRange{
-  display: flex;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.rangeKilo{
+  display: inline-flex;
+  width: 100%;
 }
