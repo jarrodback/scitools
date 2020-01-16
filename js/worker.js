@@ -1,7 +1,7 @@
 onmessage = function (e) {
     self.importScripts('https://npmcdn.com/@turf/turf/turf.min.js');
-    self.importScripts("https://d3js.org/d3.v5.js");
     console.log("here");
+
     var counties = [];
     var missionsInUk = [];
     arrcreated = e.data[1];
@@ -38,4 +38,6 @@ onmessage = function (e) {
 
     console.log("loaded DATA successfully");
     postMessage([counties, missionsInUk]);
+    
+
 }
