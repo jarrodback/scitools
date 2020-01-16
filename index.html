@@ -42,13 +42,13 @@
       </div>
     </div>
     <div id="mainSideBarContent">
-      <h1>SCi-Toolset Coverage of Data</h1>
+      <h1>SCi-Toolset coverage of data</h1>
       <div id="functionButtons">
         <button onclick="missionsInCounties()">Calculate polygons over UK</button>
-        <button onclick="getNewData()">Update Data</button>
+        <button onclick="getNewData()">Update data</button>
       </div>
       <div id="searchBar">
-        <h2>Search for a Mission</h2>
+        <h2>Search for a mission</h2>
         <input id="searchbar" onkeypress="mySearchFunction(event)" type="search" class="missionSearch" placeholder="Enter MissionID..."
         />
         <script>
@@ -68,11 +68,11 @@
         </script>
       </div>
       <div id="searchResults">
-        <h2 class="accordion">Search Results:</h2>
+        <h2 class="accordion">Search results:</h2>
         <div class="panel" id="metaPanel">
-          <h2 class="accordion" hidden="true" id="globalData">&#8618; Global Data: </h2>
-          <p id="globalArea" visible="true"></p>
-          <p id="globalCoverage"  visible="true"></p>
+          <h2 class="accordion" hidden="true" id="polyMetadata">&#8618; Global Data: </h2>
+          <p id="globalArea" class="polymetaTag" visible="true"></p>
+          <p id="globalCoverage" class="polymetaTag" visible="true"></p>
           <h2 class="accordion" hidden="true" id="metadata">&#8618; Meta Data: </h2>
           <p id="metaMissionID" class="metaTag" visible="false"></p>
           <p id="metaAreaCovered" class="metaTag"></p>
@@ -91,17 +91,18 @@
           <p id="polymetaAreaCovered" class="polymetaTag"></p>
           <p id="polymetaTotalArea" class="polymetaTag"></p>
           <p id="polymetaDateCreated" class="polymetaTag"></p>
+          <div class="closeUp">Back &#8593;</div>
         </div>
       </div>
       <div id="histogram">
-        <h2 class="accordion">Graphs</h2>
+        <h2 class="accordion">Graphs:</h2>
         <div class="panel">
-          <div id="missionGraph"></div>
-          <div id="countiesHistogram"></div>
-          <div id="closestGraph"></div>
-          <div id="areaGraph"></div>
-
-        </div>
+        <div id="missionGraph"></div>
+        <div id="countiesHistogram"></div>
+        <div id="closestGraph"></div>
+        <div id="areaGraph"></div>
+        <div class="closeUp">Back &#8593;</div>
+      </div>
       </div>
     </div>
   </div>
@@ -118,8 +119,5 @@
   <script src="js/histogram.js" type="text/javascript"></script>
   <script src="js/apidata.js" type="text/javascript"></script>
   <script src="js/sliderEvent.js" type="text/javascript"></script>
-
-
 </body>
-
 </html>
