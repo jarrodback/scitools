@@ -71,3 +71,12 @@ for(i = 0; i< acc.length;i++){
         panel.style.maxHeight = panel.scrollHeight +"px";
     });
 }
+
+var acc = document.getElementsByClassName("slider");
+var i;
+for(i = 0; i< acc.length;i++){
+    acc[i].addEventListener("click", function(){
+        var panel = document.getElementsByClassName('panel')[0];
+        panel.style.maxHeight = panel.scrollHeight +"px";
+    });
+}

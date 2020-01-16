@@ -10,6 +10,7 @@ html{
 
 .accordion{
   transition: all 1s;
+  cursor: pointer;
 }
 
 ul{
@@ -111,6 +112,7 @@ transition: all 1s;
   position: relative;
   width: 100%;
   padding: 4px;
+  border-bottom: 2px solid black;
 }
 
 #searchBar h2{
@@ -131,14 +133,11 @@ transition: all 1s;
 }
 
 #filterDiv{
-  background-color: #F4D45E;
   position: relative;
   width: 100%;
   margin: 0;
   top: auto;
   z-index: 1;
-  padding: 4px;
-  border-bottom: 2px solid black;
 }
 
 #histogram{
@@ -328,7 +327,7 @@ input[type=search]:focus {
   appearance: none;
   width: 25px; /* Set a specific slider handle width */
   height: 25px; /* Slider handle height */
-  background: #4CAF50; /* Green background */
+  background: #F4D45E; /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
 
@@ -349,4 +348,8 @@ button:hover{
   background-color: #0D3B66;
   cursor: pointer;
   color: white;
+}
+
+#currentRange{
+  display: flex;
 }
