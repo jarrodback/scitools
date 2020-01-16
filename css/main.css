@@ -129,6 +129,7 @@ transition: all 1s;
   padding: 4px;
   border-bottom: 2px solid black;
 }
+
 #filterDiv{
   background-color: #F4D45E;
   position: relative;
@@ -139,8 +140,6 @@ transition: all 1s;
   padding: 4px;
   border-bottom: 2px solid black;
 }
-
-
 
 #histogram{
   position: relative;
@@ -338,4 +337,16 @@ input[type=search]:focus {
   height: 25px; /* Slider handle height */
   background: #4CAF50; /* Green background */
   cursor: pointer; /* Cursor on hover */
+}
+button{
+  background-color: white;
+  border-style: none;
+  padding: 5px;
+  font-size: 14px;
+}
+
+button:hover{
+  background-color: #0D3B66;
+  cursor: pointer;
+  color: white;
 }

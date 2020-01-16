@@ -14,7 +14,7 @@ function dataSort() {
         getHistogram1();
         getHistogram2();
         graphClicked = true;
-        var panel = document.getElementsByClassName('panel')[1];
+        var panel = document.getElementsByClassName('panel')[2];
         panel.style.maxHeight = panel.scrollHeight +"px";
     }
     // overwriting the values in array if button is repressed, this is to stop the data duplicating
@@ -86,7 +86,7 @@ function showRegionHistogram(){
         }
     }
     Plotly.newPlot('countiesHistogram', data, layout);
-    var panel = document.getElementsByClassName('panel')[1];
+    var panel = document.getElementsByClassName('panel')[2];
     panel.style.maxHeight = panel.scrollHeight +"px"; 
 }
 
