@@ -32,6 +32,7 @@ fetch('data/ukBorders.geojson')
         for (var i = 0; i < countiesData.features[0].geometry.coordinates.length; i++) {
             areaOfUk = areaOfUk + (turf.area(turf.polygon(countiesData.features[0].geometry.coordinates[i])) / 1000000);
         }
+        console.log(areaOfUk);
     }
     )
 
@@ -50,8 +51,10 @@ function loadGlobalMeta(){
     for(var x = 0; x < imageData.length; x++){
         globalArea += imageData[x].properties.area; 
     } 
+    //console.log(areaOfUk); 
     globalCoverage = ((areaOfUk/globalArea)*100) + '%';
     console.log(globalCoverage); 
+    document.getElementById('globalData').hidden = false; 
     document.getElementById('globalArea').visible = true; 
     document.getElementById('globalCoverage').visible = true; 
     document.getElementById('globalArea').innerHTML = 'Global Polygon Area: ' + globalArea.toFixed(2) + 'km²';
@@ -95,7 +98,6 @@ function initMap(){
         counties = JSON.parse(data);
         showRegionHistogram();
     });
-    setTimeout(loadGlobalMeta(), 2000);
 }
 function getNewData(){
     imageData = [];
@@ -253,10 +255,6 @@ function getProductFromImageData(id, callback){
         }
     }
 }
-///////////////////HISTOGRAM///////////////////
-
-
-
 ///////////////////SEARCH BAR///////////////////
 function getMissionType(id){
     //check if the page is loading 
@@ -438,6 +436,7 @@ function resetData(){
 var specElement = document.getElementById("searchbar");
 var sidebar = document.getElementById("sidebar");
 document.addEventListener('click', function(event){
+    loadGlobalMeta();
     //checks if search is being cancelled by clicking inside the search bar
     var isClickInside = specElement.contains(event.target);    
     if(isClickInside && activeSearch){
