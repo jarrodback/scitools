@@ -127,6 +127,7 @@ transition: all 1s;
   top: auto;
   z-index: 1;
   padding: 4px;
+  border-bottom: 2px solid black;
 }
 
 #histogram{
@@ -135,6 +136,7 @@ transition: all 1s;
   z-index: 1;
   padding: 4px;
   background-color: #fff;
+  border-bottom: 2px solid black;
 }
 
 #histogram button{
@@ -273,3 +275,11 @@ input[type=search]:focus {
   background-color: rgba(255, 255, 255, 1);
 }
 
+.closeUp{
+   text-align: center;
+   font-weight: bold;
+}
+
+.closeUp:hover{
+   cursor: pointer;
+}
