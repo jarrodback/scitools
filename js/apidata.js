@@ -358,6 +358,9 @@ function getMissionById(id){
     }
     //displays the IDsearch table once all the id's have been loaded in
     document.getElementById("polyIDtable").hidden = false; 
+
+    //change histogram data set
+    missionSearchHistogram(searchQ);   
 }; 
 
 function searchPolygonID(id){
@@ -440,6 +443,7 @@ document.addEventListener('click', function(event){
         resetData();
         //reload products 
         repopulateMap();
+        getHistogram2(); 
     }
     //if the event clicked is a idQsearch button 
     if(event.target.className == 'idQsearch'){

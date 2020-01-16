@@ -193,6 +193,7 @@ function getHistogram() {
 
 function getHistogram2() {
     // using plot.ly
+    var myPlot = document.getElementById('missionGraph')
         var trace = {
             x: areaData,
             type: 'histogram',
@@ -238,185 +239,118 @@ function getHistogram2() {
   
     Plotly.newPlot('missionGraph', [trace], layout);
 
-    // myPlot.on('plotly_click', function(data){
-    //     var pts = '';
-    //     for(var i=0; i < data.points.length; i++){
-    //         pts = data.points[i].x;
-    //         console.log(pts); 
-    //     }
-
-    //     //X axis values of histogram bars increasing 50 each time; 
-    //     //add hover over 
-
-    //     var histoBarPts = []; 
-    //     histoBarPts.push(0);
-    //     histoBarPts.push(50);
-    //     histoBarPts.push(100); 
-    //     histoBarPts.push(150);
-    //     histoBarPts.push(200); 
-    //     histoBarPts.push(250);
-    //     histoBarPts.push(300); 
-    //     histoBarPts.push(350);
-    //     histoBarPts.push(400);
-    //     histoBarPts.push(450); 
-    //     histoBarPts.push(500);
-    //     histoBarPts.push(550); 
-
-    //     for(var i=0; i < histoBarPts.length; i++){
-    //         if(pts == histoBarPts[i]){
-    //             console.log('Histogram bar ' + (i+1) + ' clicked!'); 
-    //             var barClicked = (i+1);    
-    //         }
-    //     }
-
-    //     //display approprate polygons for range
-    //     var areaSearchQ = []; 
-    //     switch(barClicked){
-    //             case 1: {
-    //                 //range 0 - 50 
-    //                 console.log("range 0-50")
-    //                 for(var x = 0; x < imageData.length; x++){
-    //                     if(imageData[x].properties.area < 50){
-    //                         areaSearchQ.push(imageData[x].properties.id); 
-    //                     }
-    //                 }
-    //                 break;
-    //             }
-    //             case 2: {
-    //                 //range 50 - 100 
-    //                 console.log("range 50-100")
-    //                 for(var x = 0; x < imageData.length; x++){
-    //                     if(imageData[x].properties.area > 50 && imageData[x].properties.area < 100){
-    //                         areaSearchQ.push(imageData[x].properties.id); 
-    //                     }
-    //                 }
-    //                 break;
-    //             }
-    //             case 3: {
-    //                 //range 100 - 150  
-    //                 console.log("range 100-150")
-    //                 for(var x = 0; x < imageData.length; x++){
-    //                     if(imageData[x].properties.area > 100 && imageData[x].properties.area < 150){
-    //                         areaSearchQ.push(imageData[x].properties.id); 
-    //                     }
-    //                 }
-    //                 break;
-    //             }
-    //             case 4: {
-    //                 //range 150 - 200  
-    //                 console.log("range 150-200")
-    //                 for(var x = 0; x < imageData.length; x++){
-    //                     if(imageData[x].properties.area > 150 && imageData[x].properties.area < 200){
-    //                         areaSearchQ.push(imageData[x].properties.id); 
-    //                     }
-    //                 }
-    //                 break; 
-    //             }
-    //             case 5: {
-    //                 //range 200 - 250
-    //                 console.log("range 200-250")
-    //                 for(var x = 0; x < imageData.length; x++){
-    //                     if(imageData[x].properties.area > 200 && imageData[x].properties.area < 250){
-    //                         areaSearchQ.push(imageData[x].properties.id); 
-    //                     }
-    //                 }
-    //                 break;
-    //             };
-    //             case 6: {
-    //                 //range 250 - 300  
-    //                 console.log("range 250-300")
-    //                 for(var x = 0; x < imageData.length; x++){
-    //                     if(imageData[x].properties.area > 250 && imageData[x].properties.area < 300){
-    //                         areaSearchQ.push(imageData[x].properties.id); 
-    //                     }
-    //                 }
-    //                 break;
-    //             };
-    //             case 7: {
-    //                 //range 300 - 350  
-    //                 console.log("range 300-350")
-    //                 for(var x = 0; x < imageData.length; x++){
-    //                     if(imageData[x].properties.area > 300 && imageData[x].properties.area < 350){
-    //                         areaSearchQ.push(imageData[x].properties.id); 
-    //                     }
-    //                 }
-    //                 break;
-    //             };
-    //             case 8: {
-    //                 //range 350 - 400  
-    //                 console.log("range 350-400")
-    //                 for(var x = 0; x < imageData.length; x++){
-    //                     if(imageData[x].properties.area > 350 && imageData[x].properties.area < 400){
-    //                         areaSearchQ.push(imageData[x].properties.id); 
-    //                     }
-    //                 }
-    //                 break;
-    //             };
-    //             case 9: {
-    //                 //range 400 - 450  
-    //                 console.log("range 400-450")
-    //                 for(var x = 0; x < imageData.length; x++){
-    //                     if(imageData[x].properties.area > 400 && imageData[x].properties.area < 450){
-    //                         areaSearchQ.push(imageData[x].properties.id); 
-    //                     }
-    //                 }
-    //                 break;
-    //             };
-    //             case 10: {
-    //                 //range 450 - 500  
-    //                 console.log("range 450-500")
-    //                 for(var x = 0; x < imageData.length; x++){
-    //                     if(imageData[x].properties.area > 450 && imageData[x].properties.area < 500){
-    //                         areaSearchQ.push(imageData[x].properties.id); 
-    //                     }
-    //                 }
-    //                 break;
-    //             };
-    //             case 11: {
-    //                 //range 500 - 550  
-    //                 console.log("range 500-550")
-    //                 for(var x = 0; x < imageData.length; x++){
-    //                     if(imageData[x].properties.area > 500 && imageData[x].properties.area < 550){
-    //                         areaSearchQ.push(imageData[x].properties.id); 
-    //                     }
-    //                 }
-    //                 break;
-    //             };
-    //             case 12: {
-    //                 //range 550 - 600  
-    //                 console.log("range 550-600")
-    //                 for(var x = 0; x < imageData.length; x++){
-    //                     if(imageData[x].properties.area > 550 && imageData[x].properties.area < 600){
-    //                         areaSearchQ.push(imageData[x].properties.id); 
-    //                     }
-    //                 }
-    //                 break;
-    //             };
-    //     }
-    // console.log(areaSearchQ);
-    
-    // for(var x = 0; x < layerData.length; x++){
-    //     map.removeLayer(layerData[x]);
-    // }
-    // markerGroup.eachLayer(function(layer){
-    //     map.removeLayer(layer);
-    // });
-    // addCountiesToMap();
-    
-    // for(var p = 0; p < areaSearchQ.length; p++){
-    //     getProductFromImageData(areaSearchQ[p], function(geoJSONdata){
-    //         //add geoJSONdata to the map
-    //         console.log(geoJSONdata);
-    //         addToMap(geoJSONdata);
-
-    //         var mapLocation = geoJSONdata.properties.centre.split(",");
-    //         marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
-    //         marker.addTo(markerGroup); 
-    //         marker.addTo(map);
+    myPlot.on('plotly_click', function(data){
+        var pts = '';
+        //gets point clicked on histogram
+        for(var i=0; i < data.points.length; i++){
+            pts = data.points[i].x;
+            console.log(pts); 
+        }
+        //check if mission has been searched
+        if(activeSearch){
+            //only search through current missions
+            var searchQdata = []; 
+            for(var x = 0; x < searchQ.length; x++){
+                getProductFromImageData(searchQ[x], function(geoJSONdata){
+                    searchQdata.push(geoJSONdata);
+                });
+            } 
+            //set search range
+            var lowRange = null;
+            var highRange = null;
             
-    //     })
-    // }
-    // });
+            switch(pts){
+                case 0: {
+                    lowRange = -50;
+                    highRange = 49; 
+                    break; 
+                }
+                case 50: {
+                    lowRange = 50;
+                    highRange = 100; 
+                    break; 
+                }
+                case 100: {
+                    lowRange = 100;
+                    highRange = 150;
+                    break;
+                }
+                case 150: {
+                    lowRange = 150;
+                    highRange = 200;
+                    break;
+                }
+                case 200: {
+                    lowRange = 200;
+                    highRange = 250;
+                    break;
+                }
+                case 250: {
+                    lowRange = 250;
+                    highRange = 300;
+                    break;
+                }
+                case 300: {
+                    lowRange = 300;
+                    highRange = 350;
+                    break;
+                }
+                case 350: {
+                    lowRange = 350;
+                    highRange = 400;
+                    break;
+                }
+                case 400: {
+                    lowRange = 400;
+                    highRange = 450;
+                    break;
+                }
+                case 450: {
+                    lowRange = 450;
+                    highRange = 500;
+                    break;
+                }
+                case 500: {
+                    lowRange = 500;
+                    highRange = null;
+                    break;
+                }
+            }
+            //reset markers 
+            markerGroup.eachLayer(function(layer){
+                map.removeLayer(layer); 
+            });
+            //search using high and low range
+            console.log(searchQdata);
+            for(var x = 0; x < searchQdata.length; x++){
+                if(searchQdata[x].properties.area > lowRange && searchQdata[x].properties.area < highRange){
+                    console.log(searchQdata[x]);
+                    console.log('high range: ' + highRange + ' low range: ' + lowRange);
+                    //add marker 
+                    var mapLocation = searchQdata[x].properties.centre.split(",");
+                    marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
+                    marker.addTo(markerGroup);
+                    marker.addTo(map);
+                }
+            };
+            
+        }
+
+    });
 }
+function missionSearchHistogram(searchQ){
+    areaData = [];
+    for(var x = 0; x < searchQ.length; x++){
+        getProductFromImageData(searchQ[x], function(geoJSONdata){
+            areaData.push(geoJSONdata.properties.area); 
+        })
+    } 
+    console.log(areaData);
+    activeSearch = true; 
+    getHistogram2(); 
+}; 
+
+
+
 //Add More histograms here !!
 
