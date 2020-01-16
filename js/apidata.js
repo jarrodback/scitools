@@ -688,18 +688,31 @@ var areaFilter;
 slider.onchange = function() {
     areaFilter = this.value; 
     var currentRange = document.getElementById('currentRange');
-
+    console.log('slider change');
     for (var x = 0; x < layerData.length; x++) {
         map.removeLayer(layerData[x]);
     }
   
     //needs to work for when search is active
+    if(activeSearch){
+        for(var p = 0; p < searchQ.length; p++){
+            getProductFromImageData(searchQ[p], function(geoJSONdata){
+                if(geoJSONdata.properties.area < areaFilter){
+                    addToMap(geoJSONdata);
+                }
+                
+      
+            })
+            
+        }
+
+    }else{
     for(var x = 0; x < imageData.length; x++){
         if(imageData[x].properties.area < areaFilter){
             addToMap(imageData[x]);
         }
     }
-    
+    }
 }
 
 slider.oninput = function(){
