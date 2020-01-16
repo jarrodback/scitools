@@ -3,8 +3,8 @@ var testData = [];
 function dataSort() {
     // storing mission area into array
     if (graphClicked == false) {
-        for (var x = 0; x < imageData.length; x++) {
-            areaData.push(imageData[x].properties.area, imageData[x].properties.missionid);
+        for (var x = 0; x < (imageData.length); x++) {
+            areaData.push(imageData[x].properties.area);
             testData.push(imageData[x].properties.area);
             testData.sort(function(a,b){return a-b});
             startDates.push(imageData[x].properties.startdate);
@@ -14,7 +14,7 @@ function dataSort() {
         getHistogram1();
         getHistogram2();
         graphClicked = true;
-        var panel = document.getElementsByClassName('panel')[1];
+        var panel = document.getElementsByClassName('panel')[2];
         panel.style.maxHeight = panel.scrollHeight +"px";
     }
     // overwriting the values in array if button is repressed, this is to stop the data duplicating
@@ -86,7 +86,7 @@ function showRegionHistogram(){
         }
     }
     Plotly.newPlot('countiesHistogram', data, layout);
-    var panel = document.getElementsByClassName('panel')[1];
+    var panel = document.getElementsByClassName('panel')[2];
     panel.style.maxHeight = panel.scrollHeight +"px"; 
 }
 
@@ -101,7 +101,11 @@ function getHistogram1() {
         type: 'histogram',
         cumulative:{enabled: true},
         marker: {
-            color: '#0D3B66'
+            color: '#0D3B66', 
+            line: {
+            color:  "#ffffff", 
+            width: 1
+            }
         },
     };
     var layout = {
@@ -204,8 +208,12 @@ function getHistogram2() {
             x: areaData,
             type: 'histogram',
             marker: {
-                color: '#0D3B66'
-            }, 
+                color: '#0D3B66',
+            line: {
+            color:  "#ffffff", 
+            width: 1
+            },
+            } 
         };
         var layout = {
             title: {

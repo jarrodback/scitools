@@ -506,7 +506,7 @@ document.addEventListener('click', function (event) {
                     marker.addTo(markerGroup);
                     marker.addTo(map);
                 });
-                var panel = document.getElementsByClassName('panel')[0];
+                var panel = document.getElementsByClassName('panel')[1];
                 panel.style.maxHeight = panel.scrollHeight + "px";
             };
         }
@@ -514,12 +514,13 @@ document.addEventListener('click', function (event) {
     };
     var filterClick = 0; 
     if(event.target.id == 'filter'){
-        var panel = document.getElementById('filterPanel');
-        if(panel.style.maxHeight){
-            panel.style.maxHeight = null;
+        var panel2 = document.getElementById('filterPanel');
+        document.getElementById('filterDiv').visible = true;
+        if(panel2.style.maxHeight){
+            panel2.style.maxHeight = null;
         }
         else{
-            panel.style.maxHeight = panel.scrollHeight +"px";
+            panel2.style.maxHeight = panel2.scrollHeight +"px";
         }
         
     }
@@ -641,7 +642,7 @@ map.on('popupopen', function (feature) {
     var i;
     for (i = 0; i < acc.length; i++) {
         acc[i].addEventListener("click", function () {
-            var panel = document.getElementsByClassName('panel')[0];
+            var panel = document.getElementsByClassName('panel')[1];
             panel.style.maxHeight = panel.scrollHeight + "px";
         });
     }
@@ -649,7 +650,7 @@ map.on('popupopen', function (feature) {
     var i2;
     for (i2 = 0; i2 < acc.length; i2++) {
         acc1[i2].addEventListener("click", function () {
-            var panel = document.getElementsByClassName('panel')[0];
+            var panel = document.getElementsByClassName('panel')[1];
             panel.style.maxHeight = panel.scrollHeight + "px";
         });
     }
@@ -669,3 +670,48 @@ legend.onAdd = function (map) {
     return div;
 };
 legend.addTo(map);
+
+var slider = document.getElementById("myRange");
+
+
+
+// Update the current slider value (each time you drag the slider handle)
+///////////////////FILTER///////////////////////////
+var filters = [];
+var areaFilter;
+
+
+slider.onchange = function() {
+    areaFilter = this.value; 
+    var currentRange = document.getElementById('currentRange');
+    console.log('slider change');
+    for (var x = 0; x < layerData.length; x++) {
+        map.removeLayer(layerData[x]);
+    }
+  
+    //needs to work for when search is active
+    if(activeSearch){
+        for(var p = 0; p < searchQ.length; p++){
+            getProductFromImageData(searchQ[p], function(geoJSONdata){
+                if(geoJSONdata.properties.area < areaFilter){
+                    addToMap(geoJSONdata);
+                }
+                
+      
+            })
+            
+        }
+
+    }else{
+    for(var x = 0; x < imageData.length; x++){
+        if(imageData[x].properties.area < areaFilter){
+            addToMap(imageData[x]);
+        }
+    }
+    }
+}
+
+slider.oninput = function(){
+    currentRange.innerHTML = this.value + 'km²';
+}
+
