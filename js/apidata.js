@@ -518,12 +518,13 @@ document.addEventListener('click', function (event) {
     };
     var filterClick = 0; 
     if(event.target.id == 'filter'){
-        var panel = document.getElementById('filterPanel');
-        if(panel.style.maxHeight){
-            panel.style.maxHeight = null;
+        var panel2 = document.getElementById('filterPanel');
+        document.getElementById('filterDiv').visible = true;
+        if(panel2.style.maxHeight){
+            panel2.style.maxHeight = null;
         }
         else{
-            panel.style.maxHeight = panel.scrollHeight +"px";
+            panel2.style.maxHeight = panel2.scrollHeight +"px";
         }
         
     }
@@ -673,3 +674,35 @@ legend.onAdd = function (map) {
     return div;
 };
 legend.addTo(map);
+
+var slider = document.getElementById("myRange");
+
+
+
+// Update the current slider value (each time you drag the slider handle)
+///////////////////FILTER///////////////////////////
+var filters = [];
+var areaFilter;
+
+
+slider.onchange = function() {
+    areaFilter = this.value; 
+    var currentRange = document.getElementById('currentRange');
+
+    for (var x = 0; x < layerData.length; x++) {
+        map.removeLayer(layerData[x]);
+    }
+  
+    //needs to work for when search is active
+    for(var x = 0; x < imageData.length; x++){
+        if(imageData[x].properties.area < areaFilter){
+            addToMap(imageData[x]);
+        }
+    }
+    
+}
+
+slider.oninput = function(){
+    currentRange.innerHTML = this.value + 'km²';
+}
+

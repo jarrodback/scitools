@@ -52,10 +52,12 @@
         <input  id = "searchbar" onkeypress="mySearchFunction(event)" type="search" class="missionSearch" placeholder="Enter MissionID..."/>
         
         <input type="image" src="data/filter.png" height="35px" width="35px" class="filter" id="filter"/>
-        <div id="filterDiv">
+        <div id="filterDiv" visible="false">
         <h2 class="accordion">Filters:</h2>
-        <div class="panel" id="filterPanel">
-        <p>asdsadsadsadsad</p>
+        <div class="panel" id="filterPanel" visible="false">
+        <p>Land Coverage Range:</p>
+        <p id="currentRange"></p>
+        <input type="range" min="1" max="600" value="600" class="slider" id="myRange">
         </div>
         </div>
 
