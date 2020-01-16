@@ -362,6 +362,7 @@ function missionSearchHistogram(searchQ){
     getHistogram2(); 
     getHistogram();
     getHistogram1();
+    
 };
 
 

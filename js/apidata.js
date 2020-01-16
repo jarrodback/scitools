@@ -33,9 +33,10 @@ fetch('data/ukBorders.geojson')
             areaOfUk = areaOfUk + (turf.area(turf.polygon(countiesData.features[0].geometry.coordinates[i])) / 1000000);
         }
         console.log(areaOfUk);
+      
+
     }
     )
-
 fetch('data/ukcounties.geojson').then(Response => Response.text()).then((data) => {
     regionsData = JSON.parse(data);
     for (var i = 0; i < regionsData.features.length; i++) {
@@ -44,16 +45,31 @@ fetch('data/ukcounties.geojson').then(Response => Response.text()).then((data) =
 })
 ///////////////////LOAD IN GLOBAL META DATA///////////////////////////
 function loadGlobalMeta(){
+    //numbers must match with graphs 
     console.log('loading global meta data'); 
-    var globalArea = 0;
-    var globalCoverage; 
-    console.log(imageData); 
+
+    //clear duplicates from imageData
+    var imageDataU = []; 
     for(var x = 0; x < imageData.length; x++){
-        globalArea += imageData[x].properties.area; 
+        var dupFound = false; 
+        var toPush = imageData[x]; 
+        for(var p = 0; p < imageDataU.length; p++){
+            if(toPush.properties.id == imageDataU[p].properties.id){
+                dupFound = true; 
+            }
+        }
+        if(!dupFound) imageDataU.push(toPush); 
+    }
+
+
+    var globalArea = 0;
+    var globalCoverage = 0;  
+    for(var x = 0; x < imageDataU.length; x++){
+        globalArea += imageDataU[x].properties.area; 
+        globalCoverage += imageDataU[x].properties.percentage; 
     } 
-    //console.log(areaOfUk); 
-    globalCoverage = ((areaOfUk/globalArea)*100) + '%';
-    console.log(globalCoverage); 
+
+    globalCoverage = globalCoverage.toFixed(4)+'%';
     document.getElementById('globalData').hidden = false; 
     document.getElementById('globalArea').visible = true; 
     document.getElementById('globalCoverage').visible = true; 
@@ -98,6 +114,7 @@ function initMap(){
         counties = JSON.parse(data);
         showRegionHistogram();
     });
+
 }
 function getNewData(){
     imageData = [];
@@ -188,6 +205,7 @@ function getTokenPHP(){
 }
 function getProductSearchPHP(){
     //    // result is api key
+    
         return fetch('api/productsearch/', {
             method: 'POST',
             mode: "same-origin",
@@ -232,6 +250,7 @@ async function getProductGeoJSONPHP(){
         });
 }
 function getProductByIDPHP(id, callback){
+        
         fetch('api/productinfo/', {
         method: 'POST',
         mode: "same-origin",
@@ -297,6 +316,22 @@ function getMissionById(id){
     //qArea for calculating mission total area
     var qArea = []; 
     var currentMission;
+    //remove dups from searchQ
+    var searchQU = []; 
+    for(var x = 0; x < searchQ.length; x++){
+        var dupFound = false; 
+        var toPush = searchQ[x]; 
+        for(var p = 0; p < searchQU.length; p++){
+            if(toPush == searchQU[p]){
+                dupFound = true; 
+            }
+        }
+        if(!dupFound) searchQU.push(toPush); 
+    }
+    searchQ = searchQU; 
+
+
+
     for(var x = 0; x < searchQ.length; x++){
         getProductFromImageData(searchQ[x], function(geoJSONdata){
             //add geoJSONdata to the map
@@ -305,10 +340,12 @@ function getMissionById(id){
             //var mapLocation = geoJSONdata.properties.centre.split(",");
             var mapLocation = turf.centroid(geoJSONdata);
             console.log(mapLocation);
+            
             marker = L.marker({lng: mapLocation.geometry.coordinates[0], lat: mapLocation.geometry.coordinates[1]});
-            //marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
             marker.addTo(markerGroup); 
             marker.addTo(map);
+            
+            
             currentMission = geoJSONdata; 
             //push current ploygon area to qArea array
             qArea.push(geoJSONdata.properties.area); 
@@ -442,8 +479,11 @@ document.addEventListener('click', function(event){
     if(isClickInside && activeSearch){
         resetData();
         //reload products 
+        
         repopulateMap();
         getHistogram2(); 
+        getHistogram1();
+        getHistogram(); 
     }
     //if the event clicked is a idQsearch button 
     if(event.target.className == 'idQsearch'){
