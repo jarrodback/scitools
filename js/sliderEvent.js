@@ -45,6 +45,7 @@ for(i = 0; i< acc.length;i++){
     });
 }
 
+
 var acc = document.getElementsByClassName("closeUp");
 var i;
 for(i = 0; i< acc.length;i++){

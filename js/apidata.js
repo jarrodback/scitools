@@ -69,7 +69,7 @@ function loadGlobalMeta(){
         globalCoverage += imageDataU[x].properties.percentage; 
     } 
 
-    globalCoverage = globalCoverage.toFixed(4)+'%';
+    globalCoverage = globalCoverage+'%';
     document.getElementsByClassName('globalData').hidden = false; 
     document.getElementById('globalArea').visible = true; 
     document.getElementById('globalCoverage').visible = true; 
@@ -516,18 +516,17 @@ document.addEventListener('click', function(event){
       
     };
     var filterClick = 0; 
-    var modal = document.getElementById("myModal");
-    var btn = document.getElementById("filter");
-    var span = document.getElementsByClassName("close")[0];
     if(event.target.id == 'filter'){
-        //modal.style.display = "block";
-        filterClick++; 
-        console.log(filterClick);
+        var panel = document.getElementById('filterPanel');
+        if(panel.style.maxHeight){
+            panel.style.maxHeight = null;
+        }
+        else{
+            panel.style.maxHeight = panel.scrollHeight +"px";
+        }
+        
     }
-    if(event.target.id == 'filter' && filterClick == 0){
-        modal.style.display = "none"; 
-
-    }
+    
 });
 function saveFile(data){
     var jsonString = JSON.stringify(data);
