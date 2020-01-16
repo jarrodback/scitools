@@ -132,9 +132,9 @@ transition: all 1s;
 #histogram{
   position: relative;
   width: 100%;
-  background-color: #F95738;
   z-index: 1;
   padding: 4px;
+  background-color: #fff;
 }
 
 #histogram button{

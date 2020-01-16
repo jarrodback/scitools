@@ -517,15 +517,15 @@ function missionsInCounties() {
     worker.terminate();
     for (var u = 0; u < imageData.length; u++) {
       missionGeoJSON = imageData[u];
-      for (var i = 0; i < regionsData.length; i++) {
+      for (var i = 0; i < regionsData.features.length; i++) {
         //For the amount of counties loop
-        for (var j = 0; j < missionGeoJSON.coordinates[0].length; j = j + 60) {
+        for (var j = 0; j < missionGeoJSON.geometry.coordinates[0].length; j = j + 60) {
           //for the amount of coordinates in the mission GEOjson loop
-          if (geoContains(regionsData[i], missionGeoJSON.coordinates[0][j])) {
+          if (d3.geoContains(regionsData.features[i], missionGeoJSON.geometry.coordinates[0][j])) {
             // d3 check to see if it is in a county
             for (var p = 0; p < counties.length - 1; p++) {
               //loop for the amount of counties there are minus international waters
-              if (regionsData[i].properties.name === counties[p].name) {
+              if (regionsData.features[i].properties.name === counties[p].name) {
                 //if it is in a county add 1 to the county mission counter
                 counties[p].missionsInside++;
                 totalmissions++;

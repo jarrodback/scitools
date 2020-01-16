@@ -54,8 +54,8 @@ function showRegionHistogram(){
     ];
     var layout = {
 
-        plot_bgcolor: '#F95738',
-        paper_bgcolor: '#F95738',
+        // plot_bgcolor: '#F95738',
+        // paper_bgcolor: '#F95738',
 
         title: {
             text: 'Number of missions per county',
@@ -136,8 +136,8 @@ function getHistogram1() {
             },
         },
 
-        plot_bgcolor: '#F95738',
-        paper_bgcolor: '#F95738'
+        // plot_bgcolor: '#F95738',
+        // paper_bgcolor: '#F95738'
     };
 
     Plotly.newPlot('areaGraph', [trace], layout);
@@ -187,8 +187,8 @@ function getHistogram() {
             },
         },
 
-        plot_bgcolor: '#F95738',
-        paper_bgcolor: '#F95738'
+        // plot_bgcolor: '#F95738',
+        // paper_bgcolor: '#F95738'
     };
 
     Plotly.newPlot('closestGraph', [trace], layout);
@@ -239,8 +239,8 @@ function getHistogram2() {
                     }
                 },
             },  
-        plot_bgcolor: '#F95738',
-        paper_bgcolor: '#F95738'
+        // plot_bgcolor: '#F95738',
+        // paper_bgcolor: '#F95738'
         };
   
     Plotly.newPlot('missionGraph', [trace], layout);
