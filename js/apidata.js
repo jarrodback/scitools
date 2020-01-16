@@ -76,9 +76,6 @@ function loadGlobalMeta() {
     document.getElementById('globalArea').innerHTML = 'Global Polygon Area: ' + globalArea + 'km²';
     document.getElementById('globalCoverage').innerHTML = 'Global UK Coverage: ' + globalCoverage;
 }
-
-
-
 ///////////////////INIT MAP AND ADD POLYGONS/COUNTY///////////////////
 function initMap() {
     map = L.map('map').setView([54.3138, -2.169], 6);
@@ -89,11 +86,13 @@ function initMap() {
     fetch("data/images.json")
         .then(response => response.text())
         .then(data => {
+            setTimeout(function () {
             imageData = JSON.parse(data);
             resetData();
             repopulateMap();
             missionsLoaded = true;
-            console.log(L.layerGroup());
+            },1500);
+            addCountiesToMap();
         })
         .catch((error) => {
             console.log(error);
@@ -114,7 +113,6 @@ function initMap() {
             counties = JSON.parse(data);
             showRegionHistogram();
         });
-
 }
 function getNewData() {
     imageData = [];
@@ -162,7 +160,7 @@ function addCountiesToMap() {
     var geojsonLayer = new L.GeoJSON.AJAX("data/ukcounties.geojson", {
         style: myStyle,
         onEachFeature: function onEachFeature(feature, layer) {
-            // layer.bindPopup("Region: " + feature.properties.name);
+             layer.bindPopup("Region: " + feature.properties.name);
         }
     });
     geojsonLayer.addTo(map);
@@ -170,7 +168,7 @@ function addCountiesToMap() {
 }
 function addToMap(data) {
     var mystyle = getAreaColour(data);
-    L.geoJSON(data,
+    var polygonLayer = L.geoJSON(data,
         {
             style: mystyle,
             onEachFeature: function (feature, layer) {
@@ -182,7 +180,8 @@ function addToMap(data) {
                     + '<br><a href="#" class="popupSearchMissionId">Search this Mission</a>'
                     + '<br><a href="#" class="popupSearchPolygonId">Search this ID</a>');
             }
-        }).addTo(map);
+        });
+        polygonLayer.addTo(map).bringToFront();
     dataSort();
 }
 function repopulateMap() {
@@ -305,9 +304,6 @@ function getMissionType(id) {
     }
     if (missionIDfound) getMissionById(searchQ);
 };
-///////////////////HISTOGRAM///////////////////
-//in histogram.js
-
 function getMissionById(id) {
     //remove all map layers and add back counties 
     for (var x = 0; x < layerData.length; x++) {
