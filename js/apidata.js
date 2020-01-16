@@ -306,8 +306,11 @@ function getMissionById(id){
             //add geoJSONdata to the map
             addToMap(geoJSONdata);
             //add marker to center of polygon
-            var mapLocation = geoJSONdata.properties.centre.split(",");
-            marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
+            //var mapLocation = geoJSONdata.properties.centre.split(",");
+            var mapLocation = turf.centroid(geoJSONdata);
+            console.log(mapLocation);
+            marker = L.marker({lng: mapLocation.geometry.coordinates[0], lat: mapLocation.geometry.coordinates[1]});
+            //marker = L.marker({lat : mapLocation[0], lng : mapLocation[1]});
             marker.addTo(markerGroup); 
             marker.addTo(map);
             currentMission = geoJSONdata; 
