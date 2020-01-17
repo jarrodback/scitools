@@ -41,7 +41,7 @@
       </div>
     </div>
     <div id="mainSideBarContent">
-      <h1>SCi-Toolset coverage of data</h1>
+      <h1>SCi-Toolset Data Coverage Visualiser</h1>
       <div id="functionButtons">
         <button onclick="missionsInCounties()">Calculate polygons over UK</button>
         <button onclick="getNewData()">Update Data</button>
@@ -49,7 +49,6 @@
       <div id = "searchBar">
         <h2>Search for a Mission</h2>
         <input  id = "searchbar" onkeypress="mySearchFunction(event)" type="search" class="missionSearch" placeholder="Enter MissionID..."/>
-        
         <input type="image" src="data/filter.png" height="35px" width="35px" class="filter" id="filter"/>
         <div id="filterDiv" visible="false">
         <h2 class="accordion">Filters:</h2>
@@ -61,8 +60,6 @@
       </div>
         </div>
         </div>
-
-
         <script>
           function mySearchFunction(e) {
             var key = event.keyCode;
