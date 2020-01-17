@@ -206,11 +206,11 @@ function getHistogram2() {
     var myPlot = document.getElementById('missionGraph')
         var trace = {
             x: areaData,
+            hoverinfo: "y",
             type: 'histogram',
             marker: {
                 cmin: 0,
-                cmid: 300,
-                cmax: 600,
+                cmax: 7,
                 color: areaData,
                 colorscale: [
                     ['0', 'rgb(254,218,118)'],
@@ -398,6 +398,7 @@ function removeDups(){
         if(!dupFound) UniqueArea.push(toPush); 
     }
     areaData = UniqueArea; 
+    areaData.sort(function(a,b){return a-b});
 };
 
 
