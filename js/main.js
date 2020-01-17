@@ -101,7 +101,7 @@ if (feature.properties.area < 100) {
 function addCountiesToMap() {
 var myStyle = {
   stroke: true,
-  color: "blue",
+  color: "red",
   weight: 1,
   fill: true,
   fillOpacity: 0,
