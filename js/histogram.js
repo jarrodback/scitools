@@ -13,6 +13,7 @@ function dataSort() {
         getHistogram();
         getHistogram1();
         getHistogram2();
+        showRegionHistogram();
         graphClicked = true;
         var panel = document.getElementsByClassName('panel')[2];
         panel.style.maxHeight = panel.scrollHeight +"px";
