@@ -46,18 +46,19 @@ fetch("data/images.json")
   .catch(error => {
     console.log(error);
     getProductGeoJSONPHP();
-    setTimeout(function() {
-      for (var x = 0; x < imageData.length; x++) {
-        imageData[x].properties.area =
-          turf.area(turf.polygon(imageData[x].geometry.coordinates)) /
-          1000000;
-        imageData[x].properties.percentage =
-          (imageData[x].properties.area / areaOfUk) * 100;
-        addToMap(imageData[x]);
-      }
-      missionsLoaded = true;
-      document.getElementById("loadingScreen").style.display = "none";
-    }, 20000);
+    getNewData();
+    // setTimeout(function() {
+    //   for (var x = 0; x < imageData.length; x++) {
+    //     imageData[x].properties.area =
+    //       turf.area(turf.polygon(imageData[x].geometry.coordinates)) /
+    //       1000000;
+    //     imageData[x].properties.percentage =
+    //       (imageData[x].properties.area / areaOfUk) * 100;
+    //     addToMap(imageData[x]);
+    //   }
+    //   missionsLoaded = true;
+    //   document.getElementById("loadingScreen").style.display = "none";
+    // }, 20000);
   });
 fetch("data/counties.json")
   .then(response => response.text())
@@ -212,17 +213,12 @@ function missionsInCounties() {
         for (
           var j = 0;
           j < missionGeoJSON.geometry.coordinates[0].length;
-          j = j + 4
+          j = j + 1
         ) {
           //for the amount of coordinates in the mission GEOjson loop
-          if (
-            d3.geoContains(
-              regionsData.features[i],
-              missionGeoJSON.geometry.coordinates[0][j]
-            )
-          ) {
-            // d3 check to see if it is in a county
-            for (var p = 0; p < counties.length - 1; p++) {
+          if ( d3.geoContains(       regionsData.features[i],      missionGeoJSON.geometry.coordinates[0][j]       )
+          ) { // d3 check to see if it is in a county
+            for (var p = 0; p < counties.length; p++) {
               //loop for the amount of counties there are minus international waters
               if (
                 regionsData.features[i].properties.name === counties[p].name
