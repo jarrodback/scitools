@@ -30,7 +30,7 @@ function dataSort() {
         x = 0;
         getHistogram();
         getHistogram2();
-        getHistogram3();      
+        getHistogram1();      
     }
 }
 
