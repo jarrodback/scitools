@@ -209,6 +209,7 @@ function getHistogram2() {
             type: 'histogram',
             marker: {
                 cmin: 0,
+                cmid: 300,
                 cmax: 600,
                 color: areaData,
                 colorscale: [
