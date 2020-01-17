@@ -208,7 +208,17 @@ function getHistogram2() {
             x: areaData,
             type: 'histogram',
             marker: {
-                color: '#0D3B66',
+                cmin: 0,
+                cmax: 600,
+                color: areaData,
+                colorscale: [
+                    ['0', 'rgb(254,218,118)'],
+                    ['0.2', 'rgb(254,178,76)'],
+                    ['0.4', 'rgb(252,78,36)'],
+                    ['0.6', 'rgb(227,26,28)'],
+                    ['0.8', 'rgb(189,0,38)'],
+                    ['1.0', 'rgb(128, 0, 38)']
+                ],
             line: {
             color:  "#ffffff", 
             width: 1
