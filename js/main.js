@@ -77,6 +77,7 @@ setTimeout(function() {
     imageData[x].properties.percentage =
       (imageData[x].properties.area / areaOfUk) * 100;
     addToMap(imageData[x]);
+    dataSort();
   }
   document.getElementById("loadingScreen").style.display = "none";
 }, 20000);

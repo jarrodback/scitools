@@ -210,8 +210,8 @@ function getHistogram2() {
             type: 'histogram',
             marker: {
                 cmin: 0,
-                cmax: 7,
-                color: areaData,
+                cmax: 2,
+                color: testData,
                 colorscale: [
                     ['0', 'rgb(254,218,118)'],
                     ['0.2', 'rgb(254,178,76)'],
